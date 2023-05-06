@@ -3,11 +3,11 @@ package com.example.facethepalsy
 import android.Manifest
 import android.content.ContentValues
 import android.content.pm.PackageManager
+import android.graphics.Rect
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
 import androidx.appcompat.app.AppCompatActivity
-import androidx.camera.core.ImageCapture
 import androidx.camera.video.Recorder
 import androidx.camera.video.Recording
 import androidx.camera.video.VideoCapture
@@ -17,12 +17,8 @@ import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import android.widget.Toast
 import androidx.camera.lifecycle.ProcessCameraProvider
-import androidx.camera.core.Preview
-import androidx.camera.core.CameraSelector
 import android.util.Log
-import androidx.camera.core.ImageAnalysis
-import androidx.camera.core.ImageCaptureException
-import androidx.camera.core.ImageProxy
+import androidx.camera.core.*
 import androidx.camera.video.FallbackStrategy
 import androidx.camera.video.MediaStoreOutputOptions
 import androidx.camera.video.Quality
@@ -30,6 +26,11 @@ import androidx.camera.video.QualitySelector
 import androidx.camera.video.VideoRecordEvent
 import androidx.core.content.PermissionChecker
 import com.example.facethepalsy.databinding.ActivityMainBinding
+import com.google.mlkit.vision.common.InputImage
+import com.google.mlkit.vision.common.Triangle
+import com.google.mlkit.vision.facemesh.FaceMeshDetection
+import com.google.mlkit.vision.facemesh.FaceMeshDetectorOptions
+import com.google.mlkit.vision.facemesh.FaceMeshPoint
 import java.nio.ByteBuffer
 import java.text.SimpleDateFormat
 import java.util.Locale
@@ -64,6 +65,17 @@ class MainActivity : AppCompatActivity() {
         viewBinding.imageCaptureButton.setOnClickListener { takePhoto() }
 
         cameraExecutor = Executors.newSingleThreadExecutor()
+
+        //facemesh
+//        val defaultDetector = FaceMeshDetection.getClient(
+//            FaceMeshDetectorOptions.DEFAULT_OPTIONS)
+
+//        val Detector = FaceMeshDetection.getClient(
+//            FaceMeshDetectorOptions.Builder()
+//                .setUseCase(FaceMeshDetectorOptions.FACE_MESH)
+//                .build()
+//        )
+
     }
 
     private fun takePhoto() {}
@@ -140,5 +152,45 @@ class MainActivity : AppCompatActivity() {
                 finish()
             }
         }
+    }
+}
+@ExperimentalGetImage private class YourImageAnalyzer : ImageAnalysis.Analyzer {
+    val detector = FaceMeshDetection.getClient(
+        FaceMeshDetectorOptions.Builder()
+            .setUseCase(FaceMeshDetectorOptions.FACE_MESH)
+            .build()
+    )
+    override fun analyze(imageProxy: ImageProxy) {
+        val mediaImage = imageProxy.image
+        if (mediaImage != null) {
+            val image = InputImage.fromMediaImage(mediaImage, imageProxy.imageInfo.rotationDegrees)
+            // Pass image to an ML Kit Vision API
+            // ...
+            val result = detector.process(image)
+                .addOnSuccessListener { result ->
+                    for (faceMesh in result) {
+                        val bounds: Rect = faceMesh.boundingBox
+
+                        // Gets all points
+                        val faceMeshpoints = faceMesh.allPoints
+                        for (faceMeshpoint in faceMeshpoints) {
+                            val index: Int = faceMeshpoint.index
+                            val position = faceMeshpoint.position
+                        }
+
+                        // Gets triangle info
+                        val triangles: List<Triangle<FaceMeshPoint>> = faceMesh.allTriangles
+                        for (triangle in triangles) {
+                            // 3 Points connecting to each other and representing a triangle area.
+                            val connectedPoints = triangle.allPoints
+                        }
+                    }
+                }
+                .addOnFailureListener { e ->
+                    // Task failed with an exception
+                    // …
+                }
+        }
+
     }
 }
