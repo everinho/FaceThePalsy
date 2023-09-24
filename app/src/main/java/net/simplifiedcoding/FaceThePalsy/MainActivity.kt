@@ -1,11 +1,10 @@
-package net.simplifiedcoding.mlkitsample
+package net.simplifiedcoding.FaceThePalsy
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.activity.result.contract.ActivityResultContracts.*
-import net.simplifiedcoding.mlkitsample.databinding.ActivityMainBinding
-import net.simplifiedcoding.mlkitsample.facedetector.FaceDetectionActivity
-import net.simplifiedcoding.mlkitsample.facemeshdetector.FaceMeshDetectionActivity
+import net.simplifiedcoding.FaceThePalsy.databinding.ActivityMainBinding
+import net.simplifiedcoding.FaceThePalsy.facedetector.FaceDetectionActivity
 
 class MainActivity : AppCompatActivity() {
 

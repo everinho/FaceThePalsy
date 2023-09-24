@@ -1,4 +1,4 @@
-package net.simplifiedcoding.mlkitsample
+package net.simplifiedcoding.FaceThePalsy
 
 import android.app.Application
 import androidx.camera.lifecycle.ProcessCameraProvider

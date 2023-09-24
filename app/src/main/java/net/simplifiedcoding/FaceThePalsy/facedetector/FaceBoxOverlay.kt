@@ -1,4 +1,4 @@
-package net.simplifiedcoding.mlkitsample.facedetector
+package net.simplifiedcoding.FaceThePalsy.facedetector
 
 import android.content.Context
 import android.graphics.Canvas
@@ -54,8 +54,13 @@ open class FaceBoxOverlay(context: Context?, attrs: AttributeSet?) : View(contex
         postInvalidate()
     }
 
+//    fun add(faceBox: FaceBox) {
+//        synchronized(lock) { faceBoxes.add(faceBox) }
+//    }
+
     fun add(faceBox: FaceBox) {
         synchronized(lock) { faceBoxes.add(faceBox) }
+        postInvalidate()
     }
 
     override fun onDraw(canvas: Canvas?) {

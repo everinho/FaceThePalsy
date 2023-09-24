@@ -1,4 +1,4 @@
-package net.simplifiedcoding.mlkitsample
+package net.simplifiedcoding.FaceThePalsy
 
 import org.junit.Test
 
