@@ -2,6 +2,7 @@ package net.simplifiedcoding.FaceThePalsy
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
 import androidx.activity.result.contract.ActivityResultContracts.*
 import net.simplifiedcoding.FaceThePalsy.databinding.ActivityMainBinding
 import net.simplifiedcoding.FaceThePalsy.facedetector.FaceDetectionActivity
@@ -54,4 +55,8 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
+    fun onCloseButtonClick(view: View) {
+        finish() // Zamknij aktywność
+    }
+
 }
