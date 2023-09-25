@@ -6,6 +6,7 @@ import android.view.View
 import androidx.activity.result.contract.ActivityResultContracts.*
 import net.simplifiedcoding.FaceThePalsy.databinding.ActivityMainBinding
 import net.simplifiedcoding.FaceThePalsy.facedetector.FaceDetectionActivity
+import net.simplifiedcoding.FaceThePalsy.facemeshdetector.FaceMeshDetectionActivity
 
 class MainActivity : AppCompatActivity() {
 
@@ -26,7 +27,8 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         binding.buttonFaceDetect.setOnClickListener {
-            this.action = Action.FACE_DETECTION
+            //this.action = Action.FACE_DETECTION
+            this.action = Action.FACE_MESH_DETECTION
             requestCameraAndStart()
         }
     }
@@ -41,6 +43,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun startCamera() {
         FaceDetectionActivity.startActivity(this)
+        //FaceMeshDetectionActivity.startActivity(this)
     }
 
     private fun requestCameraPermission() {

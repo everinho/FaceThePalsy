@@ -3,6 +3,7 @@ package net.simplifiedcoding.FaceThePalsy.facemeshdetector
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
+import android.graphics.Rect
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -13,8 +14,11 @@ import androidx.camera.core.ImageProxy
 import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import com.google.mlkit.vision.common.InputImage
+import com.google.mlkit.vision.common.Triangle
 import com.google.mlkit.vision.facemesh.FaceMeshDetection
 import com.google.mlkit.vision.facemesh.FaceMeshDetector
+import com.google.mlkit.vision.facemesh.FaceMeshDetectorOptions
+import com.google.mlkit.vision.facemesh.FaceMeshPoint
 import net.simplifiedcoding.FaceThePalsy.CameraXViewModel
 import net.simplifiedcoding.FaceThePalsy.databinding.ActivityFaceDetectionBinding
 import java.util.concurrent.Executors
@@ -59,7 +63,13 @@ class FaceMeshDetectionActivity : AppCompatActivity() {
     }
 
     private fun bindInputAnalyser() {
-        val detector = FaceMeshDetection.getClient()
+//        val detector = FaceMeshDetection.getClient()
+
+        val detector = FaceMeshDetection.getClient(
+            FaceMeshDetectorOptions.Builder()
+                .setUseCase(FaceMeshDetectorOptions.FACE_MESH)
+                .build()
+        )
 
         imageAnalysis = ImageAnalysis.Builder()
             .setTargetRotation(binding.previewView.display.rotation)
@@ -80,20 +90,48 @@ class FaceMeshDetectionActivity : AppCompatActivity() {
         }
     }
 
+//    @SuppressLint("UnsafeOptInUsageError")
+//    private fun processImageProxy(detector: FaceMeshDetector, imageProxy: ImageProxy) {
+//        val inputImage =
+//            InputImage.fromMediaImage(imageProxy.image!!, imageProxy.imageInfo.rotationDegrees)
+//        detector.process(inputImage).addOnSuccessListener { faces ->
+//            faces.forEach { face ->
+//
+//            }
+//        }.addOnFailureListener {
+//            it.printStackTrace()
+//        }.addOnCompleteListener {
+//            imageProxy.close()
+//        }
+//    }
+
     @SuppressLint("UnsafeOptInUsageError")
     private fun processImageProxy(detector: FaceMeshDetector, imageProxy: ImageProxy) {
         val inputImage =
             InputImage.fromMediaImage(imageProxy.image!!, imageProxy.imageInfo.rotationDegrees)
-        detector.process(inputImage).addOnSuccessListener { faces ->
-            faces.forEach { face ->
-                //@Todo draw face mesh here
+        detector.process(inputImage).addOnSuccessListener { result ->
+            for (faceMesh in result) {
+                // Tutaj możesz wykorzystać informacje o twarzach
+                val bounds: Rect = faceMesh.boundingBox
+                val faceMeshpoints = faceMesh.allPoints
+                for (faceMeshpoint in faceMeshpoints) {
+                    val index: Int = faceMeshpoint.index
+                    val position = faceMeshpoint.position
+                    // Tutaj możesz wykorzystać punkty siatki twarzy
+                }
+                val triangles: List<Triangle<FaceMeshPoint>> = faceMesh.allTriangles
+                for (triangle in triangles) {
+                    val connectedPoints = triangle.allPoints
+                    // Tutaj możesz wykorzystać informacje o trójkątach
+                }
             }
+            imageProxy.close()
         }.addOnFailureListener {
             it.printStackTrace()
-        }.addOnCompleteListener {
             imageProxy.close()
         }
     }
+
 
     companion object {
         private val TAG = FaceMeshDetectionActivity::class.simpleName

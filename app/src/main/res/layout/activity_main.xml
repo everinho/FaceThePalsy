@@ -2,7 +2,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:background="#EDEDED"
+    android:background="#e0deee"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity">
@@ -11,33 +11,73 @@
         android:id="@+id/linearLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginStart="32dp"
-        android:layout_marginTop="32dp"
-        android:layout_marginEnd="32dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginEnd="24dp"
         android:layout_marginBottom="32dp"
         android:orientation="vertical"
+        android:background="#e0deee"
         android:padding="18dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
+        <TextView
+            android:id="@+id/welcomeLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Witaj w mojej aplikacji!"
+            android:layout_gravity="center_horizontal"
+            android:padding="7dp"
+            android:textStyle="bold"
+            android:textSize="27dp"/>
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
+            android:layout_marginTop="20dp"
+            android:text="Ćwicz"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"/>
+
         <Button
             android:id="@+id/button_face_detect"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:text="Open Face Detection"
+            android:layout_height="55dp"
+            android:layout_marginTop="20dp"
+            android:text="Skanuj twarz"
+            android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/button_open_scanner" />
+            app:layout_constraintStart_toStartOf="parent"/>
 
         <Button
-            android:id="@+id/quit_button"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Quit the app"
-            android:onClick="onCloseButtonClick" />
+            android:layout_height="55dp"
+            android:layout_marginTop="20dp"
+            android:text="Samouczek"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"/>
 
-    </LinearLayout>
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
+            android:layout_marginTop="20dp"
+            android:text="Ustawienia"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <Button
+        android:id="@+id/quit_button"
+        android:layout_width="match_parent"
+        android:layout_height="55dp"
+        android:layout_marginTop="230dp"
+        android:text="Wyjdź z aplikacji"
+        android:textStyle="bold"
+        android:onClick="onCloseButtonClick" />
+
+</LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
