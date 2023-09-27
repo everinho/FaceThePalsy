@@ -17,15 +17,30 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.QRScanner"
         tools:targetApi="31">
+        <activity android:name=".MainActivity"/>
         <activity
             android:name=".facemeshdetector.FaceMeshDetectionActivity"
             android:exported="false" />
         <activity
             android:name=".facedetector.FaceDetectionActivity"
             android:exported="false" />
+<!--        <activity-->
+<!--            android:name=".MainActivity"-->
+<!--            android:exported="true">-->
+<!--            <intent-filter>-->
+<!--                <action android:name="android.intent.action.MAIN" />-->
+
+<!--                <category android:name="android.intent.category.LAUNCHER" />-->
+<!--            </intent-filter>-->
+
+<!--            <meta-data-->
+<!--                android:name="android.app.lib_name"-->
+<!--                android:value="" />-->
+<!--        </activity>-->
         <activity
-            android:name=".MainActivity"
-            android:exported="true">
+            android:name=".SplashScreen"
+            android:exported="true"
+            android:theme="@style/SplashScreen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

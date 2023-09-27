@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:drawable="@color/md_theme_dark_onPrimaryContainer" />
+
+    <!-- Logo -->
+    <item>
+        <bitmap
+            android:src="@drawable/logo"
+            android:gravity="center_vertical|center_horizontal" />
+    </item>
+
+    <!-- Name -->
+    <item android:bottom="266dp">
+        <bitmap
+            android:src="@drawable/name"
+            android:gravity="bottom" />
+    </item>
+</layer-list>
+

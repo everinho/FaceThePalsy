@@ -15,7 +15,7 @@ class FaceBox(
 ) : FaceBoxOverlay.FaceBox(overlay) {
 
     private val paint = Paint().apply {
-        color = Color.MAGENTA
+        color = Color.BLUE
         style = Paint.Style.STROKE
         strokeWidth = 6.0f
     }
