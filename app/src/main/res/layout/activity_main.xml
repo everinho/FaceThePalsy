@@ -33,13 +33,14 @@
             android:textSize="27dp"/>
 
         <Button
+            android:id="@+id/exercises"
             android:layout_width="match_parent"
             android:layout_height="55dp"
             android:layout_marginTop="20dp"
             android:text="Ćwicz"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"/>
+            app:layout_constraintStart_toStartOf="parent" />
 
         <Button
             android:id="@+id/button_face_detect"

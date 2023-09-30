@@ -1,10 +1,13 @@
 package net.simplifiedcoding.FaceThePalsy
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
+import android.widget.Button
 import androidx.activity.result.contract.ActivityResultContracts.*
 import net.simplifiedcoding.FaceThePalsy.databinding.ActivityMainBinding
+import net.simplifiedcoding.FaceThePalsy.exercises.ExerciseActivity
 import net.simplifiedcoding.FaceThePalsy.facedetector.FaceDetectionActivity
 import net.simplifiedcoding.FaceThePalsy.facemeshdetector.FaceMeshDetectionActivity
 
@@ -30,6 +33,13 @@ class MainActivity : AppCompatActivity() {
             //this.action = Action.FACE_DETECTION
             this.action = Action.FACE_MESH_DETECTION
             requestCameraAndStart()
+        }
+
+        val exercisesButton = findViewById<Button>(R.id.exercises)
+        exercisesButton.setOnClickListener {
+            // Otwórz aktywność ExerciseActivity po kliknięciu przycisku "exercises"
+            val intent = Intent(this, ExerciseActivity::class.java)
+            startActivity(intent)
         }
     }
 
@@ -59,7 +69,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
     fun onCloseButtonClick(view: View) {
-        finish() // Zamknij aktywność
+        finish()
     }
 
 }

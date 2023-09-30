@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.widget.Button
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.CameraSelector
@@ -18,6 +19,8 @@ import com.google.mlkit.vision.face.FaceDetection
 import com.google.mlkit.vision.face.FaceDetector
 import com.google.mlkit.vision.face.FaceDetectorOptions
 import net.simplifiedcoding.FaceThePalsy.CameraXViewModel
+import net.simplifiedcoding.FaceThePalsy.MainActivity
+import net.simplifiedcoding.FaceThePalsy.R
 import net.simplifiedcoding.FaceThePalsy.databinding.ActivityFaceDetectionBinding
 import java.util.concurrent.Executors
 
@@ -36,6 +39,14 @@ class FaceDetectionActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityFaceDetectionBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        val backButton = findViewById<Button>(R.id.backButton)
+
+        backButton.setOnClickListener {
+            val intent = Intent(this, MainActivity::class.java)
+            startActivity(intent)
+            finishAffinity()
+        }
 
         cameraSelector =
             CameraSelector.Builder().requireLensFacing(CameraSelector.LENS_FACING_FRONT).build()

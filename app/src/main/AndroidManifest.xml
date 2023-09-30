@@ -51,6 +51,12 @@
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
+
+        <activity
+            android:name=".exercises.ExerciseActivity"
+            android:exported="true">
+        </activity>
+
     </application>
 
 </manifest>
