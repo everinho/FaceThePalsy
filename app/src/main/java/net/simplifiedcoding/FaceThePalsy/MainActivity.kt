@@ -30,15 +30,19 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         binding.buttonFaceDetect.setOnClickListener {
-            //this.action = Action.FACE_DETECTION
-            this.action = Action.FACE_MESH_DETECTION
+            this.action = Action.FACE_DETECTION
             requestCameraAndStart()
         }
 
         val exercisesButton = findViewById<Button>(R.id.exercises)
         exercisesButton.setOnClickListener {
-            // Otwórz aktywność ExerciseActivity po kliknięciu przycisku "exercises"
             val intent = Intent(this, ExerciseActivity::class.java)
+            startActivity(intent)
+        }
+
+        val settingsButton = findViewById<Button>(R.id.settings)
+        settingsButton.setOnClickListener {
+            val intent = Intent(this, SettingsActivity::class.java)
             startActivity(intent)
         }
     }
