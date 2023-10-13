@@ -6,6 +6,19 @@
     android:layout_height="match_parent"
     tools:context=".qrscanner.ScannerActivity">
 
+    <TextView
+        android:id="@+id/distanceTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:padding="8dp"
+        android:text="Odległość:"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+
     <Button
         android:id="@+id/backButton"
         android:layout_width="wrap_content"
@@ -22,7 +35,9 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent" >
+
+    </androidx.camera.view.PreviewView>
 
     <net.simplifiedcoding.FaceThePalsy.facedetector.FaceBoxOverlay
         android:id="@+id/graphic_overlay"

@@ -124,7 +124,7 @@ class FaceDetectionActivity : AppCompatActivity() {
                 val faceBox = FaceBox(binding.graphicOverlay, face, imageProxy.image!!.cropRect)
                 val landmarks = FaceLandmarks(binding.graphicOverlay, face, imageProxy.image!!.cropRect)
                 binding.graphicOverlay.add(faceBox)
-                binding.graphicOverlay.add(landmarks) // Dodaj rysowanie landmarków
+                binding.graphicOverlay.add(landmarks)
             }
         }.addOnFailureListener {
             it.printStackTrace()
