@@ -76,6 +76,7 @@ class FaceDetectionActivity : AppCompatActivity() {
             FaceDetectorOptions.Builder()
                 .setPerformanceMode(FaceDetectorOptions.PERFORMANCE_MODE_FAST)
                 .setContourMode(FaceDetectorOptions.CONTOUR_MODE_ALL)
+                .setClassificationMode(FaceDetectorOptions.CLASSIFICATION_MODE_ALL)
                 .build()
         )
         imageAnalysis = ImageAnalysis.Builder()
@@ -97,23 +98,6 @@ class FaceDetectionActivity : AppCompatActivity() {
         }
     }
 
-//    @SuppressLint("UnsafeOptInUsageError")
-//    private fun processImageProxy(detector: FaceDetector, imageProxy: ImageProxy) {
-//        val inputImage =
-//            InputImage.fromMediaImage(imageProxy.image!!, imageProxy.imageInfo.rotationDegrees)
-//        detector.process(inputImage).addOnSuccessListener { faces ->
-//            binding.graphicOverlay.clear()
-//            faces.forEach { face ->
-//                val faceBox = FaceBox(binding.graphicOverlay, face, imageProxy.image!!.cropRect)
-//                binding.graphicOverlay.add(faceBox)
-//            }
-//        }.addOnFailureListener {
-//            it.printStackTrace()
-//        }.addOnCompleteListener {
-//            imageProxy.close()
-//        }
-//    }
-
     @SuppressLint("UnsafeOptInUsageError")
     private fun processImageProxy(detector: FaceDetector, imageProxy: ImageProxy) {
         val inputImage =
@@ -132,7 +116,6 @@ class FaceDetectionActivity : AppCompatActivity() {
             imageProxy.close()
         }
     }
-
 
     companion object {
         private val TAG = FaceDetectionActivity::class.simpleName

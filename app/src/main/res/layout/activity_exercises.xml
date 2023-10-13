@@ -6,17 +6,6 @@
     android:layout_height="match_parent"
     tools:context=".exercises.ExerciseActivity">
 
-<!--    <androidx.appcompat.widget.Toolbar-->
-<!--        android:id="@+id/toolbar"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="?attr/actionBarSize"-->
-<!--        android:background="?attr/colorPrimary"-->
-<!--        android:theme="?attr/actionBarTheme"-->
-<!--        app:titleTextColor="@android:color/white"-->
-<!--        app:navigationIcon="?android:attr/homeAsUpIndicator"-->
-<!--        app:layout_constraintTop_toTopOf="parent"-->
-<!--        app:layout_constraintStart_toStartOf="parent" />-->
-
     <TextView
         android:id="@+id/exerciseName"
         android:layout_width="wrap_content"

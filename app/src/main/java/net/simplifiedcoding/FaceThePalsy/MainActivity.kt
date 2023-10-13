@@ -9,7 +9,6 @@ import androidx.activity.result.contract.ActivityResultContracts.*
 import net.simplifiedcoding.FaceThePalsy.databinding.ActivityMainBinding
 import net.simplifiedcoding.FaceThePalsy.exercises.ExerciseActivity
 import net.simplifiedcoding.FaceThePalsy.facedetector.FaceDetectionActivity
-import net.simplifiedcoding.FaceThePalsy.facemeshdetector.FaceMeshDetectionActivity
 
 class MainActivity : AppCompatActivity() {
 
@@ -57,7 +56,6 @@ class MainActivity : AppCompatActivity() {
 
     private fun startCamera() {
         FaceDetectionActivity.startActivity(this)
-        //FaceMeshDetectionActivity.startActivity(this)
     }
 
     private fun requestCameraPermission() {

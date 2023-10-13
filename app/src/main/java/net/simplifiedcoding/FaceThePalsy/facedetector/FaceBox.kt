@@ -3,7 +3,6 @@ package net.simplifiedcoding.FaceThePalsy.facedetector
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
-import android.graphics.Path
 import android.graphics.PointF
 import android.graphics.Rect
 import com.google.mlkit.vision.face.Face
@@ -102,7 +101,6 @@ class FaceBox(
             canvas?.drawPoint(mappedPoint.x, mappedPoint.y, paint)
         }
 
-        // Obliczenie odległości i przekazanie wyników do słuchacza
         val leftEyebrowEyeDistance = calculateDistance(
             leftEyebrowTopPoints,
             leftEye
@@ -114,21 +112,23 @@ class FaceBox(
         )
 
         val leftDistanceText = "Left Eyebrow to Left Eye Distance: ${leftEyebrowEyeDistance?.toString() ?: "N/A"}"
-        canvas?.drawText(leftDistanceText, 120F, 250F, paint_text)
+        canvas?.drawText(leftDistanceText, 50F, 250F, paint_text)
 
         val rightDistanceText = "Right Eyebrow to Right Eye Distance: ${rightEyebrowEyeDistance?.toString() ?: "N/A"}"
-        canvas?.drawText(rightDistanceText, 120F, 350F, paint_text)
+        canvas?.drawText(rightDistanceText, 50F, 350F, paint_text)
 
-        // Rysowanie prostokąta wokół twarzy
         val rect = getBoxRect(
             imageRectWidth = imageRect.width().toFloat(),
             imageRectHeight = imageRect.height().toFloat(),
             faceBoundingBox = face.boundingBox
         )
         canvas?.drawRect(rect, paint_box)
+
+        val SmileText = "Right Eyebrow to Right Eye Distance: ${face.smilingProbability?.toString() ?: "N/A"}"
+        canvas?.drawText(SmileText, 50F, 450F, paint_text)
     }
 
-    fun calculateDistance(points1: List<PointF>?, points2: List<PointF>?): Float? {
+    private fun calculateDistance(points1: List<PointF>?, points2: List<PointF>?): Float? {
         if (points1 != null && points2 != null) {
             var distance = 0f
             for (i in points1.indices) {
