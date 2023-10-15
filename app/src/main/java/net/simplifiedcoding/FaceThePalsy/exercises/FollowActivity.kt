@@ -173,6 +173,13 @@ class FollowActivity : AppCompatActivity() {
     }
 
     private fun showTrainingCompletedDialog() {
+        FollowBox.left_repeats = 0
+        FollowBox.right_repeats = 0
+        FollowBox.smile_repeats = 0
+        FollowBox.isExercising_left = false
+        FollowBox.isExercising_right = false
+        FollowBox.isSmiling = false
+
         val alertDialogBuilder = AlertDialog.Builder(this)
         alertDialogBuilder.setTitle("Zestaw treningowy ukończony")
         alertDialogBuilder.setMessage("Gratulacje! Ukończyłeś zestaw treningowy.")
