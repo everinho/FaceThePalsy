@@ -47,16 +47,17 @@
             android:layout_width="match_parent"
             android:layout_height="55dp"
             android:layout_marginTop="20dp"
-            android:text="Skanuj twarz"
+            android:text="Skanuj"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"/>
 
         <Button
+            android:id="@+id/follow"
             android:layout_width="match_parent"
             android:layout_height="55dp"
             android:layout_marginTop="20dp"
-            android:text="Samouczek"
+            android:text="Śledzenie"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"/>

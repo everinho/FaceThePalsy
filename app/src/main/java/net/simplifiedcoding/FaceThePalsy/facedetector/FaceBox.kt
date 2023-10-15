@@ -124,7 +124,7 @@ class FaceBox(
         )
         canvas?.drawRect(rect, paint_box)
 
-        val SmileText = "Right Eyebrow to Right Eye Distance: ${face.smilingProbability?.toString() ?: "N/A"}"
+        val SmileText = "Smiling probability: ${face.smilingProbability?.toString() ?: "N/A"}"
         canvas?.drawText(SmileText, 50F, 450F, paint_text)
     }
 

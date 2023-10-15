@@ -8,6 +8,7 @@ import android.widget.Button
 import androidx.activity.result.contract.ActivityResultContracts.*
 import net.simplifiedcoding.FaceThePalsy.databinding.ActivityMainBinding
 import net.simplifiedcoding.FaceThePalsy.exercises.ExerciseActivity
+import net.simplifiedcoding.FaceThePalsy.exercises.FollowActivity
 import net.simplifiedcoding.FaceThePalsy.facedetector.FaceDetectionActivity
 
 class MainActivity : AppCompatActivity() {
@@ -42,6 +43,12 @@ class MainActivity : AppCompatActivity() {
         val settingsButton = findViewById<Button>(R.id.settings)
         settingsButton.setOnClickListener {
             val intent = Intent(this, SettingsActivity::class.java)
+            startActivity(intent)
+        }
+
+        val followButton = findViewById<Button>(R.id.follow)
+        followButton.setOnClickListener {
+            val intent = Intent(this, FollowActivity::class.java)
             startActivity(intent)
         }
     }
