@@ -8,6 +8,8 @@ import android.graphics.Rect
 import com.google.mlkit.vision.face.Face
 import com.google.mlkit.vision.face.FaceContour
 import net.simplifiedcoding.FaceThePalsy.facedetector.FaceBoxOverlay
+import kotlin.math.pow
+import kotlin.math.sqrt
 
 
 class FollowBox(
@@ -49,10 +51,53 @@ class FollowBox(
         textSize = 55.0f
         setShadowLayer(5f, 5f, 5f, Color.DKGRAY)
     }
+    private val paint_punkt = Paint().apply {
+        color = Color.RED
+        style = Paint.Style.STROKE
+        strokeWidth = 10.0f
+    }
 
     override fun draw(canvas: Canvas?) {
         if(id == 0)
         {
+            val faceContours = face.getContour(FaceContour.FACE)?.points
+
+            val index1 = 18
+            val index2 = 35
+
+            val point1 = faceContours?.getOrNull(index1)
+            val point2 = faceContours?.getOrNull(index2)
+
+
+            val adjustedPoint1 = PointF(point1!!.x, point1.y)
+            val rect1 = getBoxRect(
+                imageRectWidth = imageRect.width().toFloat(),
+                imageRectHeight = imageRect.height().toFloat(),
+                faceBoundingBox = Rect(
+                    adjustedPoint1.x.toInt(),
+                    adjustedPoint1.y.toInt(),
+                    adjustedPoint1.x.toInt(),
+                    adjustedPoint1.y.toInt()
+                )
+            )
+            val mappedPoint1 = PointF(rect1.centerX(), rect1.centerY())
+            canvas?.drawPoint(mappedPoint1.x, mappedPoint1.y, paint_punkt)
+
+            val adjustedPoint2 = PointF(point2!!.x, point2.y)
+            val rect2 = getBoxRect(
+                imageRectWidth = imageRect.width().toFloat(),
+                imageRectHeight = imageRect.height().toFloat(),
+                faceBoundingBox = Rect(
+                    adjustedPoint2.x.toInt(),
+                    adjustedPoint2.y.toInt(),
+                    adjustedPoint2.x.toInt(),
+                    adjustedPoint2.y.toInt()
+                )
+            )
+            val mappedPoint2 = PointF(rect2.centerX(), rect2.centerY())
+            canvas?.drawPoint(mappedPoint2.x, mappedPoint2.y, paint_punkt)
+            val length = calculateDistance_simple(mappedPoint1.x,mappedPoint1.y, mappedPoint2.x,mappedPoint2.y)
+
             val leftEyebrowTopPoints = face.getContour(FaceContour.LEFT_EYEBROW_TOP)?.points
             leftEyebrowTopPoints?.forEach { point ->
                 val adjustedPoint = PointF(point.x, point.y)
@@ -93,22 +138,21 @@ class FollowBox(
             )
 
             val leftDistanceText = "Right Distance: ${leftEyebrowEyeDistance?.toString() ?: "N/A"}"
+            val proporcja = leftEyebrowEyeDistance!! / length
             canvas?.drawText("Unoszenie powiek, prawe oko", 50F, 250F, paint_text)
             canvas?.drawText(leftDistanceText, 50F, 350F, paint_text)
             val repetitionsText = "Powtórzenia: $left_repeats / 10"
             canvas?.drawText(repetitionsText, 50F, 450F, paint_text)
 
-            if (leftEyebrowEyeDistance != null) {
-                if (leftEyebrowEyeDistance > 300) {
-                    if (!isExercising_left) {
-                        isExercising_left = true
-                        if (left_repeats < 10) {
-                            left_repeats += 1
-                        }
+            if (proporcja > 0.29) {
+                if (!isExercising_left) {
+                    isExercising_left = true
+                    if (left_repeats < 10) {
+                        left_repeats += 1
                     }
-                } else if(leftEyebrowEyeDistance < 260) {
-                    isExercising_left = false
                 }
+            } else if(proporcja < 0.26) {
+                isExercising_left = false
             }
 
             if (left_repeats >= 10) {
@@ -118,6 +162,44 @@ class FollowBox(
 
         if(id == 1)
         {
+            val faceContours = face.getContour(FaceContour.FACE)?.points
+
+            val index1 = 18
+            val index2 = 35
+
+            val point1 = faceContours?.getOrNull(index1)
+            val point2 = faceContours?.getOrNull(index2)
+
+
+            val adjustedPoint1 = PointF(point1!!.x, point1.y)
+            val rect1 = getBoxRect(
+                imageRectWidth = imageRect.width().toFloat(),
+                imageRectHeight = imageRect.height().toFloat(),
+                faceBoundingBox = Rect(
+                    adjustedPoint1.x.toInt(),
+                    adjustedPoint1.y.toInt(),
+                    adjustedPoint1.x.toInt(),
+                    adjustedPoint1.y.toInt()
+                )
+            )
+            val mappedPoint1 = PointF(rect1.centerX(), rect1.centerY())
+            canvas?.drawPoint(mappedPoint1.x, mappedPoint1.y, paint_punkt)
+
+            val adjustedPoint2 = PointF(point2!!.x, point2.y)
+            val rect2 = getBoxRect(
+                imageRectWidth = imageRect.width().toFloat(),
+                imageRectHeight = imageRect.height().toFloat(),
+                faceBoundingBox = Rect(
+                    adjustedPoint2.x.toInt(),
+                    adjustedPoint2.y.toInt(),
+                    adjustedPoint2.x.toInt(),
+                    adjustedPoint2.y.toInt()
+                )
+            )
+            val mappedPoint2 = PointF(rect2.centerX(), rect2.centerY())
+            canvas?.drawPoint(mappedPoint2.x, mappedPoint2.y, paint_punkt)
+            val length = calculateDistance_simple(mappedPoint1.x,mappedPoint1.y, mappedPoint2.x,mappedPoint2.y)
+
             val rightEyebrowTopPoints = face.getContour(FaceContour.RIGHT_EYEBROW_TOP)?.points
             rightEyebrowTopPoints?.forEach { point ->
                 val adjustedPoint = PointF(point.x, point.y)
@@ -158,22 +240,22 @@ class FollowBox(
             )
 
             val rightDistanceText = "Left Distance: ${rightEyebrowEyeDistance?.toString() ?: "N/A"}"
+            val proporcja = rightEyebrowEyeDistance!! /length
             canvas?.drawText("Unoszenie powiek, lewe oko", 50F, 250F, paint_text)
+            canvas?.drawText(proporcja.toString(), 50F, 550F, paint_text)
             canvas?.drawText(rightDistanceText, 50F, 350F, paint_text)
             val repetitionsText = "Powtórzenia: $right_repeats / 10"
             canvas?.drawText(repetitionsText, 50F, 450F, paint_text)
 
-            if (rightEyebrowEyeDistance != null) {
-                if (rightEyebrowEyeDistance > 380) {
-                    if (!isExercising_right) {
-                        isExercising_right = true
-                        if (right_repeats < 10) {
-                            right_repeats += 1
-                        }
+            if (proporcja > 0.36) {
+                if (!isExercising_right) {
+                    isExercising_right = true
+                    if (right_repeats < 10) {
+                        right_repeats += 1
                     }
-                } else if(rightEyebrowEyeDistance < 340) {
-                    isExercising_right = false
                 }
+            } else if(proporcja < 0.33) {
+                isExercising_right = false
             }
 
             if (right_repeats >= 10) {
@@ -181,13 +263,6 @@ class FollowBox(
             }
 
         }
-
-//        val rect = getBoxRect(
-//            imageRectWidth = imageRect.width().toFloat(),
-//            imageRectHeight = imageRect.height().toFloat(),
-//            faceBoundingBox = face.boundingBox
-//        )
-//        canvas?.drawRect(rect, paint_box)
 
         if (id == 2) {
             val smilingProbability = face.smilingProbability
@@ -228,5 +303,8 @@ class FollowBox(
             return distance
         }
         return null
+    }
+    private fun calculateDistance_simple(x1: Float, y1: Float, x2: Float, y2: Float): Float {
+        return sqrt((x2 - x1).pow(2) + (y2 - y1).pow(2))
     }
 }

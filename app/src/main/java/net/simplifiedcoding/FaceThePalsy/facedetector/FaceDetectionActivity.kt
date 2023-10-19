@@ -77,7 +77,8 @@ class FaceDetectionActivity : AppCompatActivity() {
             FaceDetectorOptions.Builder()
                 .setPerformanceMode(FaceDetectorOptions.PERFORMANCE_MODE_FAST)
                 .setContourMode(FaceDetectorOptions.CONTOUR_MODE_ALL)
-                .setClassificationMode(FaceDetectorOptions.CLASSIFICATION_MODE_ALL)
+                .setClassificationMode(FaceDetectorOptions.CLASSIFICATION_MODE_NONE)
+                .setLandmarkMode(FaceDetectorOptions.LANDMARK_MODE_ALL)
                 .build()
         )
         imageAnalysis = ImageAnalysis.Builder()
@@ -107,9 +108,9 @@ class FaceDetectionActivity : AppCompatActivity() {
             binding.graphicOverlay.clear()
             faces.forEach { face ->
                 val faceBox = FaceBox(binding.graphicOverlay, face, imageProxy.image!!.cropRect)
-                val landmarks = FaceLandmarks(binding.graphicOverlay, face, imageProxy.image!!.cropRect)
+                //val landmarks = FaceLandmarks(binding.graphicOverlay, face, imageProxy.image!!.cropRect)
                 binding.graphicOverlay.add(faceBox)
-                binding.graphicOverlay.add(landmarks)
+                //binding.graphicOverlay.add(landmarks)
             }
         }.addOnFailureListener {
             it.printStackTrace()

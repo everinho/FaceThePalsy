@@ -44,15 +44,23 @@ class FollowActivity : AppCompatActivity() {
     private val exercises = listOf(
         ExerciseModel(
             "Ćwiczenie 1",
-            "Unoszenie czoła - 10 powtórzeń"
+            "Unoszenie czoła (jedna strona) - 10 powtórzeń"
         ),
         ExerciseModel(
             "Ćwiczenie 2",
-            "Marszczenie czoła - 10 powtórzeń"
+            "Unoszenie czoła (druga strona) - 10 powtórzeń"
         ),
         ExerciseModel(
             "Ćwiczenie 3",
             "Uśmiech - 10 powtórzeń"
+        ),
+        ExerciseModel(
+            "Ćwiczenie 4",
+            "Marszczenie czoła (jedna strona) - 10 powtórzeń"
+        ),
+        ExerciseModel(
+            "Ćwiczenie 5",
+            "Marszczenie czoła (druga strona) - 10 powtórzeń"
         )
     )
 
@@ -119,7 +127,16 @@ class FollowActivity : AppCompatActivity() {
             FaceDetectorOptions.Builder()
                 .setPerformanceMode(FaceDetectorOptions.PERFORMANCE_MODE_FAST)
                 .setContourMode(FaceDetectorOptions.CONTOUR_MODE_ALL)
+                .setClassificationMode(FaceDetectorOptions.CLASSIFICATION_MODE_NONE)
+                .setLandmarkMode(FaceDetectorOptions.LANDMARK_MODE_NONE)
+                .build()
+        )
+        val classificator = FaceDetection.getClient(
+            FaceDetectorOptions.Builder()
+                .setPerformanceMode(FaceDetectorOptions.PERFORMANCE_MODE_FAST)
+                .setContourMode(FaceDetectorOptions.CONTOUR_MODE_NONE)
                 .setClassificationMode(FaceDetectorOptions.CLASSIFICATION_MODE_ALL)
+                .setLandmarkMode(FaceDetectorOptions.LANDMARK_MODE_NONE)
                 .build()
         )
         imageAnalysis = ImageAnalysis.Builder()
@@ -129,7 +146,7 @@ class FollowActivity : AppCompatActivity() {
         val cameraExecutor = Executors.newSingleThreadExecutor()
 
         imageAnalysis.setAnalyzer(cameraExecutor) { imageProxy ->
-            processImageProxy(detector, imageProxy)
+            processImageProxy(detector,classificator, imageProxy)
         }
 
         try {
@@ -142,20 +159,36 @@ class FollowActivity : AppCompatActivity() {
     }
 
     @SuppressLint("UnsafeOptInUsageError")
-    private fun processImageProxy(detector: FaceDetector, imageProxy: ImageProxy) {
+    private fun processImageProxy(detector: FaceDetector,classificator: FaceDetector, imageProxy: ImageProxy) {
         val inputImage = InputImage.fromMediaImage(imageProxy.image!!, imageProxy.imageInfo.rotationDegrees)
         val currentExercise = exercises[currentExerciseIndex]
 
-        detector.process(inputImage).addOnSuccessListener { faces ->
-            binding.graphicOverlay.clear()
-            faces.forEach { face ->
-                val faceBox = FollowBox(binding.graphicOverlay, face, imageProxy.image!!.cropRect, currentExerciseIndex)
-                binding.graphicOverlay.add(faceBox)
+        if(currentExerciseIndex==2)
+        {
+            classificator.process(inputImage).addOnSuccessListener { faces ->
+                binding.graphicOverlay.clear()
+                faces.forEach { face ->
+                    val faceBox = FollowBox(binding.graphicOverlay, face, imageProxy.image!!.cropRect, currentExerciseIndex)
+                    binding.graphicOverlay.add(faceBox)
+                }
+            }.addOnFailureListener {
+                it.printStackTrace()
+            }.addOnCompleteListener {
+                imageProxy.close()
             }
-        }.addOnFailureListener {
-            it.printStackTrace()
-        }.addOnCompleteListener {
-            imageProxy.close()
+        }
+        else{
+            detector.process(inputImage).addOnSuccessListener { faces ->
+                binding.graphicOverlay.clear()
+                faces.forEach { face ->
+                    val faceBox = FollowBox(binding.graphicOverlay, face, imageProxy.image!!.cropRect, currentExerciseIndex)
+                    binding.graphicOverlay.add(faceBox)
+                }
+            }.addOnFailureListener {
+                it.printStackTrace()
+            }.addOnCompleteListener {
+                imageProxy.close()
+            }
         }
     }
 
