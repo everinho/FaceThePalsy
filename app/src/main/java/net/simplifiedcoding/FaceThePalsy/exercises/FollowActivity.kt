@@ -52,19 +52,21 @@ class FollowActivity : AppCompatActivity() {
         ),
         ExerciseModel(
             "Ćwiczenie 3",
-            "Uśmiech - 10 powtórzeń"
-        ),
-        ExerciseModel(
-            "Ćwiczenie 4",
             "Marszczenie czoła (jedna strona) - 10 powtórzeń"
         ),
         ExerciseModel(
-            "Ćwiczenie 5",
+            "Ćwiczenie 4",
             "Marszczenie czoła (druga strona) - 10 powtórzeń"
+        ),
+        ExerciseModel(
+            "Ćwiczenie 5",
+            "Uśmiech - 10 powtórzeń"
         )
+
     )
 
     private var currentExerciseIndex = 0
+    private var success = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -72,7 +74,6 @@ class FollowActivity : AppCompatActivity() {
         setContentView(binding.root)
 
 
-        val prevButton = findViewById<Button>(R.id.prevButton)
         val nextButton = findViewById<Button>(R.id.nextButton)
         val backButton = findViewById<Button>(R.id.backButton)
         backButton.setOnClickListener {
@@ -81,20 +82,29 @@ class FollowActivity : AppCompatActivity() {
             finishAffinity()
         }
 
-        prevButton.setOnClickListener {
-            if (currentExerciseIndex > 0) {
-                currentExerciseIndex--
-                updateExerciseView()
-                updateButtonStates()
-            }
-        }
-
         nextButton.setOnClickListener {
-            if (currentExerciseIndex < exercises.size - 1) {
-                currentExerciseIndex++
+            when (currentExerciseIndex) {
+                0 -> {
+                    if(FollowBox.left_repeats>=10) success=true
+                }
+                1 -> {
+                    if(FollowBox.right_repeats>=10) success=true
+                }
+                2 -> {
+                    if(FollowBox.left_repeats_2>=10) success=true
+                }
+                3 -> {
+                    if(FollowBox.right_repeats_2>=10) success=true
+                }
+                4 -> {
+                    if(FollowBox.smile_repeats>=10) success=true
+                }
+            }
+            if (currentExerciseIndex < exercises.size - 1 && success) {
+                currentExerciseIndex+=1
                 updateExerciseView()
                 updateButtonStates()
-            } else {
+            } else if(currentExerciseIndex == exercises.size -1 && success){
                 showTrainingCompletedDialog()
             }
         }
@@ -163,7 +173,7 @@ class FollowActivity : AppCompatActivity() {
         val inputImage = InputImage.fromMediaImage(imageProxy.image!!, imageProxy.imageInfo.rotationDegrees)
         val currentExercise = exercises[currentExerciseIndex]
 
-        if(currentExerciseIndex==2)
+        if(currentExerciseIndex==4)
         {
             classificator.process(inputImage).addOnSuccessListener { faces ->
                 binding.graphicOverlay.clear()
@@ -194,31 +204,33 @@ class FollowActivity : AppCompatActivity() {
 
     private fun updateExerciseView() {
         val exercise = exercises[currentExerciseIndex]
+        success=false
         binding.graphicOverlay.clear()
     }
 
     private fun updateButtonStates() {
-        val prevButton = findViewById<Button>(R.id.prevButton)
         val nextButton = findViewById<Button>(R.id.nextButton)
 
-        prevButton.isEnabled = currentExerciseIndex > 0
         nextButton.isEnabled = currentExerciseIndex <= exercises.size - 1
     }
 
     private fun showTrainingCompletedDialog() {
+        FollowBox.smile_repeats = 0
+        FollowBox.isSmiling = false
         FollowBox.left_repeats = 0
         FollowBox.right_repeats = 0
-        FollowBox.smile_repeats = 0
         FollowBox.isExercising_left = false
         FollowBox.isExercising_right = false
-        FollowBox.isSmiling = false
+        FollowBox.left_repeats_2 = 0
+        FollowBox.right_repeats_2 = 0
+        FollowBox.isExercising_left_2 = false
+        FollowBox.isExercising_right_2 = false
 
         val alertDialogBuilder = AlertDialog.Builder(this)
         alertDialogBuilder.setTitle("Zestaw treningowy ukończony")
         alertDialogBuilder.setMessage("Gratulacje! Ukończyłeś zestaw treningowy.")
         alertDialogBuilder.setPositiveButton("OK") { dialog, _ ->
             dialog.dismiss()
-            // Przenieś użytkownika do głównej aktywności
             val intent = Intent(this, MainActivity::class.java)
             startActivity(intent)
             finishAffinity()
