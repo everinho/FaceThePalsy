@@ -41,168 +41,55 @@ class FaceBox(
     private val paint_punkt = Paint().apply {
         color = Color.RED
         style = Paint.Style.STROKE
-        strokeWidth = 10.0f
+        strokeWidth = 20.0f
     }
 
     override fun draw(canvas: Canvas?) {
-        val leftEyebrowTopPoints = face.getContour(FaceContour.LEFT_EYEBROW_TOP)?.points
-        leftEyebrowTopPoints?.forEach { point ->
-            val adjustedPoint = PointF(point.x, point.y)
-            val rect = getBoxRect(
-                imageRectWidth = imageRect.width().toFloat(),
-                imageRectHeight = imageRect.height().toFloat(),
-                faceBoundingBox = Rect(
-                    adjustedPoint.x.toInt(),
-                    adjustedPoint.y.toInt(),
-                    adjustedPoint.x.toInt(),
-                    adjustedPoint.y.toInt()
-                )
-            )
-            val mappedPoint = PointF(rect.centerX(), rect.centerY())
-            canvas?.drawPoint(mappedPoint.x, mappedPoint.y, paint)
-        }
 
-        val leftEye = face.getContour(FaceContour.LEFT_EYE)?.points
-        leftEye?.forEach { point ->
-            val adjustedPoint = PointF(point.x, point.y)
-            val rect = getBoxRect(
-                imageRectWidth = imageRect.width().toFloat(),
-                imageRectHeight = imageRect.height().toFloat(),
-                faceBoundingBox = Rect(
-                    adjustedPoint.x.toInt(),
-                    adjustedPoint.y.toInt(),
-                    adjustedPoint.x.toInt(),
-                    adjustedPoint.y.toInt()
-                )
-            )
-            val mappedPoint = PointF(rect.centerX(), rect.centerY())
-            canvas?.drawPoint(mappedPoint.x, mappedPoint.y, paint)
-        }
+        //eyes
+        val left_eye = face.getContour(FaceContour.LEFT_EYE)?.points
+        val right_eye = face.getContour(FaceContour.RIGHT_EYE)?.points
 
-        val rightEyebrowTopPoints = face.getContour(FaceContour.RIGHT_EYEBROW_TOP)?.points
-        rightEyebrowTopPoints?.forEach { point ->
-            val adjustedPoint = PointF(point.x, point.y)
-            val rect = getBoxRect(
-                imageRectWidth = imageRect.width().toFloat(),
-                imageRectHeight = imageRect.height().toFloat(),
-                faceBoundingBox = Rect(
-                    adjustedPoint.x.toInt(),
-                    adjustedPoint.y.toInt(),
-                    adjustedPoint.x.toInt(),
-                    adjustedPoint.y.toInt()
-                )
-            )
-            val mappedPoint = PointF(rect.centerX(), rect.centerY())
-            canvas?.drawPoint(mappedPoint.x, mappedPoint.y, paint)
-        }
+        val index1 = 0
+        val index2 = 8
 
-        val rightEye = face.getContour(FaceContour.RIGHT_EYE)?.points
-        rightEye?.forEach { point ->
-            val adjustedPoint = PointF(point.x, point.y)
-            val rect = getBoxRect(
-                imageRectWidth = imageRect.width().toFloat(),
-                imageRectHeight = imageRect.height().toFloat(),
-                faceBoundingBox = Rect(
-                    adjustedPoint.x.toInt(),
-                    adjustedPoint.y.toInt(),
-                    adjustedPoint.x.toInt(),
-                    adjustedPoint.y.toInt()
-                )
-            )
-            val mappedPoint = PointF(rect.centerX(), rect.centerY())
-            canvas?.drawPoint(mappedPoint.x, mappedPoint.y, paint)
-        }
+        val point1 = left_eye?.getOrNull(index1)
+        val point2 = left_eye?.getOrNull(index2)
 
-        val leftEyebrowEyeDistance = calculateDistance(
-            leftEyebrowTopPoints,
-            leftEye
-        )
+        val point3 = right_eye?.getOrNull(index1)
+        val point4 = right_eye?.getOrNull(index2)
 
-        val rightEyebrowEyeDistance = calculateDistance(
-            rightEyebrowTopPoints,
-            rightEye
-        )
+        xyz(canvas, point1, point2)
+        xyz(canvas, point3, point4)
 
-        val leftDistanceText = "Left Eyebrow to Left Eye Distance: ${leftEyebrowEyeDistance?.toString() ?: "N/A"}"
-        canvas?.drawText(leftDistanceText, 50F, 250F, paint_text)
+        //nose
+        val nose = face.getContour(FaceContour.NOSE_BOTTOM)?.points
 
-        val rightDistanceText = "Right Eyebrow to Right Eye Distance: ${rightEyebrowEyeDistance?.toString() ?: "N/A"}"
-        canvas?.drawText(rightDistanceText, 50F, 350F, paint_text)
+        val point5 = nose?.getOrNull(0)
+        val point6 = nose?.getOrNull(2)
 
-//        val rect = getBoxRect(
-//            imageRectWidth = imageRect.width().toFloat(),
-//            imageRectHeight = imageRect.height().toFloat(),
-//            faceBoundingBox = face.boundingBox
-//        )
-//        canvas?.drawRect(rect, paint_box)
+        xyz(canvas, point5, point6)
 
-//        val SmileText = "Smiling probability: ${face.smilingProbability?.toString() ?: "N/A"}"
-//        canvas?.drawText(SmileText, 50F, 450F, paint_text)
+        //face
+        val facial = face.getContour(FaceContour.FACE)?.points
+        val point7 = facial?.getOrNull(18)
+        val point8 = facial?.getOrNull(29)
+        val point9 = facial?.getOrNull(7)
 
-//        val punkt = face.getLandmark(FaceLandmark.NOSE_BASE)
-//        val punkt_x = punkt?.position?.x
-//        val punkt_y = punkt?.position?.y
-//        val adjustedPoint = PointF(punkt_x!!, punkt_y!!)
-//        val cos = getBoxRect(
-//            imageRectWidth = imageRect.width().toFloat(),
-//            imageRectHeight = imageRect.height().toFloat(),
-//            faceBoundingBox = Rect(
-//                adjustedPoint.x.toInt(),
-//                adjustedPoint.y.toInt(),
-//                adjustedPoint.x.toInt(),
-//                adjustedPoint.y.toInt()
-//            )
-//        )
-//        val mappedPoint = PointF(cos.centerX(), cos.centerY())
-//        canvas?.drawPoint(mappedPoint.x, mappedPoint.y, paint_punkt)
+        //mouth
+        val mouth = face.getContour(FaceContour.LOWER_LIP_BOTTOM)?.points
+        val point10 = mouth?.getOrNull(4)
 
-//        val faceContours = face.getContour(FaceContour.FACE)?.points
-//
-//        val index1 = 18
-//        val index2 = 35
-//
-//        if (faceContours != null) {
-//            val point1 = faceContours.getOrNull(index1)
-//            val point2 = faceContours.getOrNull(index2)
-//
-//            if (point1 != null && point2 != null) {
-//                val adjustedPoint1 = PointF(point1.x, point1.y)
-//                val rect1 = getBoxRect(
-//                    imageRectWidth = imageRect.width().toFloat(),
-//                    imageRectHeight = imageRect.height().toFloat(),
-//                    faceBoundingBox = Rect(
-//                        adjustedPoint1.x.toInt(),
-//                        adjustedPoint1.y.toInt(),
-//                        adjustedPoint1.x.toInt(),
-//                        adjustedPoint1.y.toInt()
-//                    )
-//                )
-//                val mappedPoint1 = PointF(rect1.centerX(), rect1.centerY())
-//                canvas?.drawPoint(mappedPoint1.x, mappedPoint1.y, paint_punkt)
-//
-//                val adjustedPoint2 = PointF(point2.x, point2.y)
-//                val rect2 = getBoxRect(
-//                    imageRectWidth = imageRect.width().toFloat(),
-//                    imageRectHeight = imageRect.height().toFloat(),
-//                    faceBoundingBox = Rect(
-//                        adjustedPoint2.x.toInt(),
-//                        adjustedPoint2.y.toInt(),
-//                        adjustedPoint2.x.toInt(),
-//                        adjustedPoint2.y.toInt()
-//                    )
-//                )
-//                val mappedPoint2 = PointF(rect2.centerX(), rect2.centerY())
-//                canvas?.drawPoint(mappedPoint2.x, mappedPoint2.y, paint_punkt)
-//                val length = calculateDistance_simple(mappedPoint1.x,mappedPoint1.y, mappedPoint2.x,mappedPoint2.y)
-//                canvas?.drawText(length.toString(), 50F, 450F, paint_text)
-//            }
-//        }
+        xyz(canvas, point7, point8)
+        xyz(canvas, point9, point10)
+    }
 
-        val punkt1 = face.getLandmark(FaceLandmark.MOUTH_LEFT)
-        val punkt1_x = punkt1?.position?.x
-        val punkt1_y = punkt1?.position?.y
-        val adjustedPoint1 = PointF(punkt1_x!!, punkt1_y!!)
-        val cos1 = getBoxRect(
+    private fun calculateDistance_simple(x1: Float, y1: Float, x2: Float, y2: Float): Float {
+        return sqrt((x2 - x1).pow(2) + (y2 - y1).pow(2))
+    }
+    private fun xyz(canvas: Canvas?,point1: PointF?, point2: PointF?){
+        val adjustedPoint1 = PointF(point1!!.x, point1.y)
+        val rect1 = getBoxRect(
             imageRectWidth = imageRect.width().toFloat(),
             imageRectHeight = imageRect.height().toFloat(),
             faceBoundingBox = Rect(
@@ -212,14 +99,11 @@ class FaceBox(
                 adjustedPoint1.y.toInt()
             )
         )
-        val mappedPoint1 = PointF(cos1.centerX(), cos1.centerY())
+        val mappedPoint1 = PointF(rect1.centerX(), rect1.centerY())
         canvas?.drawPoint(mappedPoint1.x, mappedPoint1.y, paint_punkt)
 
-        val punkt2 = face.getLandmark(FaceLandmark.MOUTH_RIGHT)
-        val punkt2_x = punkt2?.position?.x
-        val punkt2_y = punkt2?.position?.y
-        val adjustedPoint2 = PointF(punkt2_x!!, punkt2_y!!)
-        val cos2 = getBoxRect(
+        val adjustedPoint2 = PointF(point2!!.x, point2.y)
+        val rect2 = getBoxRect(
             imageRectWidth = imageRect.width().toFloat(),
             imageRectHeight = imageRect.height().toFloat(),
             faceBoundingBox = Rect(
@@ -229,41 +113,8 @@ class FaceBox(
                 adjustedPoint2.y.toInt()
             )
         )
-        val mappedPoint2 = PointF(cos2.centerX(), cos2.centerY())
+        val mappedPoint2 = PointF(rect2.centerX(), rect2.centerY())
         canvas?.drawPoint(mappedPoint2.x, mappedPoint2.y, paint_punkt)
-
-//        val test = face.getContour(FaceContour.FACE)?.points
-//        test?.forEach { point ->
-//            val adjustedPoint = PointF(point.x, point.y)
-//            val rect = getBoxRect(
-//                imageRectWidth = imageRect.width().toFloat(),
-//                imageRectHeight = imageRect.height().toFloat(),
-//                faceBoundingBox = Rect(
-//                    adjustedPoint.x.toInt(),
-//                    adjustedPoint.y.toInt(),
-//                    adjustedPoint.x.toInt(),
-//                    adjustedPoint.y.toInt()
-//                )
-//            )
-//            val mappedPoint = PointF(rect.centerX(), rect.centerY())
-//            canvas?.drawPoint(mappedPoint.x, mappedPoint.y, paint_punkt)
-//        }
-
     }
 
-    private fun calculateDistance(points1: List<PointF>?, points2: List<PointF>?): Float? {
-        if (points1 != null && points2 != null) {
-            var distance = 0f
-            for (i in points1.indices) {
-                val dx = points1[i].x - points2[i].x
-                val dy = points1[i].y - points2[i].y
-                distance += Math.sqrt((dx * dx + dy * dy).toDouble()).toFloat()
-            }
-            return distance
-        }
-        return null
-    }
-    private fun calculateDistance_simple(x1: Float, y1: Float, x2: Float, y2: Float): Float {
-        return sqrt((x2 - x1).pow(2) + (y2 - y1).pow(2))
-    }
 }
