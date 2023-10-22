@@ -4,14 +4,10 @@ import android.annotation.SuppressLint
 import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
-import android.graphics.Canvas
-import android.graphics.Color
-import android.graphics.Paint
-import android.graphics.PointF
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
-import android.widget.TextView
+import android.widget.ProgressBar
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -21,7 +17,6 @@ import androidx.camera.core.ImageProxy
 import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import com.google.mlkit.vision.common.InputImage
-import com.google.mlkit.vision.face.FaceContour
 import com.google.mlkit.vision.face.FaceDetection
 import com.google.mlkit.vision.face.FaceDetector
 import com.google.mlkit.vision.face.FaceDetectorOptions
@@ -73,7 +68,6 @@ class FollowActivity : AppCompatActivity() {
         binding = ActivityFollowBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-
         val nextButton = findViewById<Button>(R.id.nextButton)
         val backButton = findViewById<Button>(R.id.backButton)
         backButton.setOnClickListener {
@@ -81,6 +75,7 @@ class FollowActivity : AppCompatActivity() {
             startActivity(intent)
             finishAffinity()
         }
+
 
         nextButton.setOnClickListener {
             when (currentExerciseIndex) {
@@ -133,6 +128,8 @@ class FollowActivity : AppCompatActivity() {
     }
 
     private fun bindInputAnalyser() {
+        val progressBar = findViewById<ProgressBar>(R.id.progress_bar)
+
         val detector = FaceDetection.getClient(
             FaceDetectorOptions.Builder()
                 .setPerformanceMode(FaceDetectorOptions.PERFORMANCE_MODE_FAST)
@@ -141,7 +138,7 @@ class FollowActivity : AppCompatActivity() {
                 .setLandmarkMode(FaceDetectorOptions.LANDMARK_MODE_NONE)
                 .build()
         )
-        val classificator = FaceDetection.getClient(
+        val classification = FaceDetection.getClient(
             FaceDetectorOptions.Builder()
                 .setPerformanceMode(FaceDetectorOptions.PERFORMANCE_MODE_FAST)
                 .setContourMode(FaceDetectorOptions.CONTOUR_MODE_NONE)
@@ -156,7 +153,7 @@ class FollowActivity : AppCompatActivity() {
         val cameraExecutor = Executors.newSingleThreadExecutor()
 
         imageAnalysis.setAnalyzer(cameraExecutor) { imageProxy ->
-            processImageProxy(detector,classificator, imageProxy)
+            processImageProxy(detector,classification, imageProxy, progressBar)
         }
 
         try {
@@ -169,9 +166,8 @@ class FollowActivity : AppCompatActivity() {
     }
 
     @SuppressLint("UnsafeOptInUsageError")
-    private fun processImageProxy(detector: FaceDetector,classificator: FaceDetector, imageProxy: ImageProxy) {
+    private fun processImageProxy(detector: FaceDetector,classificator: FaceDetector, imageProxy: ImageProxy, progressBar: ProgressBar) {
         val inputImage = InputImage.fromMediaImage(imageProxy.image!!, imageProxy.imageInfo.rotationDegrees)
-        val currentExercise = exercises[currentExerciseIndex]
 
         if(currentExerciseIndex==4)
         {
@@ -200,6 +196,25 @@ class FollowActivity : AppCompatActivity() {
                 imageProxy.close()
             }
         }
+
+        when (currentExerciseIndex) {
+            0 -> {
+                progressBar.progress = FollowBox.left_repeats*10
+            }
+            1 -> {
+                progressBar.progress =FollowBox.right_repeats*10
+            }
+            2 -> {
+                progressBar.progress =FollowBox.left_repeats_2*10
+            }
+            3 -> {
+                progressBar.progress =FollowBox.right_repeats_2*10
+            }
+            4 -> {
+                progressBar.progress =FollowBox.smile_repeats*10
+            }
+        }
+
     }
 
     private fun updateExerciseView() {

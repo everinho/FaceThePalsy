@@ -5,6 +5,7 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.PointF
 import android.graphics.Rect
+import android.graphics.Typeface
 import com.google.mlkit.vision.face.Face
 import com.google.mlkit.vision.face.FaceContour
 import net.simplifiedcoding.FaceThePalsy.facedetector.FaceBoxOverlay
@@ -38,26 +39,22 @@ class FollowBox(
         strokeWidth = 6.0f
     }
 
-    private val paint_box = Paint().apply {
-        color = Color.RED
-        style = Paint.Style.STROKE
-        strokeWidth = 4.0f
-    }
-
     private val paint_text = Paint().apply {
         color = Color.BLACK
         textSize = 55.0f
         setShadowLayer(5f, 5f, 5f, Color.BLACK)
+        typeface = Typeface.create(Typeface.DEFAULT, Typeface.BOLD)
     }
 
     private val paint_text_success = Paint().apply {
         color = Color.GREEN
         textSize = 55.0f
         setShadowLayer(5f, 5f, 5f, Color.DKGRAY)
+        typeface = Typeface.create(Typeface.DEFAULT, Typeface.BOLD)
     }
     private val paint_punkt = Paint().apply {
         color = Color.RED
-        style = Paint.Style.STROKE
+        style = Paint.Style.FILL
         strokeWidth = 10.0f
     }
 
@@ -100,7 +97,7 @@ class FollowBox(
             )
             val mappedPoint2 = PointF(rect2.centerX(), rect2.centerY())
             canvas?.drawPoint(mappedPoint2.x, mappedPoint2.y, paint_punkt)
-            val length = calculateDistance_simple(mappedPoint1.x,mappedPoint1.y, mappedPoint2.x,mappedPoint2.y)
+            val length = calculateDistancesimple(mappedPoint1.x,mappedPoint1.y, mappedPoint2.x,mappedPoint2.y)
 
             val leftEyebrowTopPoints = face.getContour(FaceContour.LEFT_EYEBROW_TOP)?.points
             leftEyebrowTopPoints?.forEach { point ->
@@ -144,21 +141,21 @@ class FollowBox(
             if(id == 0)
             {
                 //val leftDistanceText = "Right Distance: ${leftEyebrowEyeDistance?.toString() ?: "N/A"}"
-                val proporcja = leftEyebrowEyeDistance!! / length
-                val leftDistanceText = "Right Distance: ${proporcja?.toString() ?: "N/A"}"
+                val proportion = leftEyebrowEyeDistance!! / length
+                val leftDistanceText = "Right Distance: ${proportion?.toString() ?: "N/A"}"
                 canvas?.drawText("Unoszenie powiek, prawe oko", 50F, 250F, paint_text)
                 canvas?.drawText(leftDistanceText, 50F, 350F, paint_text)
                 val repetitionsText = "Powtórzenia: $left_repeats / 10"
                 canvas?.drawText(repetitionsText, 50F, 450F, paint_text)
 
-                if (proporcja > 0.28) {
+                if (proportion > 0.28) {
                     if (!isExercising_left) {
                         isExercising_left = true
                         if (left_repeats < 10) {
                             left_repeats += 1
                         }
                     }
-                } else if(proporcja < 0.25) {
+                } else if(proportion < 0.25) {
                     isExercising_left = false
                 }
 
@@ -169,20 +166,20 @@ class FollowBox(
             else if(id == 2)
             {
                 val leftDistanceText = "Right Distance: ${leftEyebrowEyeDistance?.toString() ?: "N/A"}"
-                val proporcja = leftEyebrowEyeDistance!! / length
+                val proportion = leftEyebrowEyeDistance!! / length
                 canvas?.drawText("Mróżenie prawego oka", 50F, 250F, paint_text)
                 canvas?.drawText(leftDistanceText, 50F, 350F, paint_text)
                 val repetitionsText = "Powtórzenia: $left_repeats_2 / 10"
                 canvas?.drawText(repetitionsText, 50F, 450F, paint_text)
 
-                if (proporcja < 0.22) {
+                if (proportion < 0.22) {
                     if (!isExercising_left_2) {
                         isExercising_left_2 = true
                         if (left_repeats_2 < 10) {
                             left_repeats_2 += 1
                         }
                     }
-                } else if(proporcja > 0.25) {
+                } else if(proportion > 0.25) {
                     isExercising_left_2 = false
                 }
 
@@ -231,7 +228,7 @@ class FollowBox(
             )
             val mappedPoint2 = PointF(rect2.centerX(), rect2.centerY())
             canvas?.drawPoint(mappedPoint2.x, mappedPoint2.y, paint_punkt)
-            val length = calculateDistance_simple(mappedPoint1.x,mappedPoint1.y, mappedPoint2.x,mappedPoint2.y)
+            val length = calculateDistancesimple(mappedPoint1.x,mappedPoint1.y, mappedPoint2.x,mappedPoint2.y)
 
             val rightEyebrowTopPoints = face.getContour(FaceContour.RIGHT_EYEBROW_TOP)?.points
             rightEyebrowTopPoints?.forEach { point ->
@@ -275,21 +272,21 @@ class FollowBox(
             if(id == 1)
             {
                 val rightDistanceText = "Left Distance: ${rightEyebrowEyeDistance?.toString() ?: "N/A"}"
-                val proporcja = rightEyebrowEyeDistance!! /length
+                val proportion = rightEyebrowEyeDistance!! /length
                 canvas?.drawText("Unoszenie powiek, lewe oko", 50F, 250F, paint_text)
-                canvas?.drawText(proporcja.toString(), 50F, 550F, paint_text)
+                canvas?.drawText(proportion.toString(), 50F, 550F, paint_text)
                 canvas?.drawText(rightDistanceText, 50F, 350F, paint_text)
                 val repetitionsText = "Powtórzenia: $right_repeats / 10"
                 canvas?.drawText(repetitionsText, 50F, 450F, paint_text)
 
-                if (proporcja > 0.35) {
+                if (proportion > 0.35) {
                     if (!isExercising_right) {
                         isExercising_right = true
                         if (right_repeats < 10) {
                             right_repeats += 1
                         }
                     }
-                } else if(proporcja < 0.32) {
+                } else if(proportion < 0.32) {
                     isExercising_right = false
                 }
                 if (right_repeats >= 10) {
@@ -299,21 +296,21 @@ class FollowBox(
             else if (id == 3)
             {
                 val rightDistanceText = "Left Distance: ${rightEyebrowEyeDistance?.toString() ?: "N/A"}"
-                val proporcja = rightEyebrowEyeDistance!! /length
+                val proportion = rightEyebrowEyeDistance!! /length
                 canvas?.drawText("Mróżenie lewego oka", 50F, 250F, paint_text)
-                canvas?.drawText(proporcja.toString(), 50F, 550F, paint_text)
+                canvas?.drawText(proportion.toString(), 50F, 550F, paint_text)
                 canvas?.drawText(rightDistanceText, 50F, 350F, paint_text)
                 val repetitionsText = "Powtórzenia: $right_repeats_2 / 10"
                 canvas?.drawText(repetitionsText, 50F, 450F, paint_text)
 
-                if (proporcja < 0.3) {
+                if (proportion < 0.3) {
                     if (!isExercising_right_2) {
                         isExercising_right_2 = true
                         if (right_repeats_2 < 10) {
                             right_repeats_2 += 1
                         }
                     }
-                } else if(proporcja < 0.33) {
+                } else if(proportion < 0.33) {
                     isExercising_right_2 = false
                 }
                 if (right_repeats_2 >= 10) {
@@ -364,7 +361,7 @@ class FollowBox(
         }
         return null
     }
-    private fun calculateDistance_simple(x1: Float, y1: Float, x2: Float, y2: Float): Float {
+    private fun calculateDistancesimple(x1: Float, y1: Float, x2: Float, y2: Float): Float {
         return sqrt((x2 - x1).pow(2) + (y2 - y1).pow(2))
     }
 }
