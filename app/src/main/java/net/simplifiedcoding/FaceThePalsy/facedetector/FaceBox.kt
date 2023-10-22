@@ -6,6 +6,7 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.PointF
 import android.graphics.Rect
+import android.graphics.Typeface
 import android.media.FaceDetector
 import android.util.Log
 import com.google.mlkit.vision.face.Face
@@ -23,28 +24,20 @@ class FaceBox(
     private val imageRect: Rect
 ) : FaceBoxOverlay.FaceBox(overlay) {
 
-    private val paint = Paint().apply {
-        color = Color.BLUE
-        style = Paint.Style.STROKE
-        strokeWidth = 6.0f
-    }
-
-    private val paint_box = Paint().apply {
-        color = Color.RED
-        style = Paint.Style.STROKE
-        strokeWidth = 4.0f
-    }
-
     private val paint_text = Paint().apply {
-        color = Color.GREEN
-        textSize = 47.0f
+        color = Color.GREEN // Kolor tekstu
+        textSize = 72.0f // Rozmiar czcionki (zmieniony na 72.0f)
+        typeface = Typeface.create(Typeface.DEFAULT, Typeface.BOLD) // Styl czcionki (tu: pogrubienie)
     }
+
 
     private val paint_punkt = Paint().apply {
-        color = Color.RED
-        style = Paint.Style.STROKE
-        strokeWidth = 14.0f
+        color = Color.BLUE
+        style = Paint.Style.FILL
+        strokeWidth = 7.0f
+        isAntiAlias = true
     }
+
 
     override fun draw(canvas: Canvas?) {
 
@@ -173,6 +166,43 @@ class FaceBox(
         val distance_Qi = distance(point37,point38)
         val distance_Qu = distance(point39,point40)
 
+        //face length for normalization
+        val faceContours = face.getContour(FaceContour.FACE)?.points
+
+        val index1 = 18
+        val index2 = 35
+
+        val pointA = faceContours?.getOrNull(index1)
+        val pointB = faceContours?.getOrNull(index2)
+
+
+        val adjustedPoint1 = PointF(pointA!!.x, pointA.y)
+        val rect1 = getBoxRect(
+            imageRectWidth = imageRect.width().toFloat(),
+            imageRectHeight = imageRect.height().toFloat(),
+            faceBoundingBox = Rect(
+                adjustedPoint1.x.toInt(),
+                adjustedPoint1.y.toInt(),
+                adjustedPoint1.x.toInt(),
+                adjustedPoint1.y.toInt()
+            )
+        )
+        val mappedPoint1 = PointF(rect1.centerX(), rect1.centerY())
+
+        val adjustedPoint2 = PointF(pointB!!.x, pointB.y)
+        val rect2 = getBoxRect(
+            imageRectWidth = imageRect.width().toFloat(),
+            imageRectHeight = imageRect.height().toFloat(),
+            faceBoundingBox = Rect(
+                adjustedPoint2.x.toInt(),
+                adjustedPoint2.y.toInt(),
+                adjustedPoint2.x.toInt(),
+                adjustedPoint2.y.toInt()
+            )
+        )
+        val mappedPoint2 = PointF(rect2.centerX(), rect2.centerY())
+        val length = calculateDistancesimple(mappedPoint1.x,mappedPoint1.y, mappedPoint2.x,mappedPoint2.y)
+
         // Dystanse po lewej stronie
         val distancesLeft = listOf(
             distance_Bl, distance_D, distance_H, distance_F, distance_J, distance_T, distance_R, distance_Vl, distance_Pi, distance_Pu, distance_Nl, distance_Nr
@@ -183,21 +213,43 @@ class FaceBox(
             distance_Br, distance_E, distance_I, distance_G, distance_K, distance_U, distance_S, distance_Vr, distance_Qi, distance_Qu, distance_Or, distance_Ol
         )
 
+        // Normalizacja wyników
+        val normalizedDistancesLeft = distancesLeft.map { it / length }
+        val normalizedDistancesRight = distancesRight.map { it / length }
+
         // Oblicz różnice między odpowiadającymi sobie dystansami
-        val differences = distancesLeft.mapIndexed { index, distanceLeft ->
-            abs(distanceLeft - distancesRight[index])
+        val differences = normalizedDistancesLeft.mapIndexed { index, distanceLeft ->
+            abs(distanceLeft - normalizedDistancesRight[index])
         }
 
         // Oblicz sumę różnic
         val sumOfDifferences = differences.sum()
 
         // Oblicz średnią różnicę
-        val asymmetry = sumOfDifferences / distancesLeft.size
+        var asymmetry = sumOfDifferences / distancesLeft.size
 
-        // Wynik asymetrii twarzy
-        Log.d("Asymmetry", "Asymmetry: $asymmetry")
-        val asymmetrytext = "Asymetria: $asymmetry"
-        canvas?.drawText(asymmetrytext, 50F, 450F, paint_text)
+        asymmetry *= 100
+        val asymmetrycalc = "Asymetria: $asymmetry"
+
+        val textX = 80F
+        val textY = 250F
+        val textColor: Int
+
+        val asymmetryText: String
+
+        if (asymmetry < 1.2) {
+            asymmetryText = "Brak asymetrii"
+            textColor = Color.GREEN // Zielony kolor
+        } else if (asymmetry < 1.6) {
+            asymmetryText = "Niewielka asymetria"
+            textColor = Color.YELLOW // Pomarańczowy kolor
+        } else {
+            asymmetryText = "Duża asymetria"
+            textColor = Color.RED // Czerwony kolor
+        }
+
+        canvas?.drawText(asymmetrycalc, textX, textY, paint_text.apply { color = textColor })
+        canvas?.drawText(asymmetryText, textX, textY + 80, paint_text.apply { color = textColor })
 
     }
 
@@ -231,7 +283,7 @@ class FaceBox(
         canvas?.drawPoint(mappedPoint2.x, mappedPoint2.y, paint_punkt)
     }
 
-    private fun calculateDistance_simple(x1: Float, y1: Float, x2: Float, y2: Float): Float {
+    private fun calculateDistancesimple(x1: Float, y1: Float, x2: Float, y2: Float): Float {
         return sqrt((x2 - x1).pow(2) + (y2 - y1).pow(2))
     }
 
@@ -262,7 +314,7 @@ class FaceBox(
         )
         val mappedPoint2 = PointF(rect2.centerX(), rect2.centerY())
 
-        val distance = calculateDistance_simple(mappedPoint1.x,mappedPoint1.y, mappedPoint2.x,mappedPoint2.y)
+        val distance = calculateDistancesimple(mappedPoint1.x,mappedPoint1.y, mappedPoint2.x,mappedPoint2.y)
         return distance
     }
 
