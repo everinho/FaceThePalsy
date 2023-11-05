@@ -4,6 +4,7 @@ import FaceLandmarks
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
@@ -34,6 +35,11 @@ class FaceDetectionActivity : AppCompatActivity() {
     private lateinit var imageAnalysis: ImageAnalysis
 
     private val cameraXViewModel = viewModels<CameraXViewModel>()
+    private val previousAsymmetryResults: MutableList<Float> = mutableListOf()
+    private var startTime: Long = 0
+    private var endTime: Long = 0
+    private var asymmetryText: String = ""
+    private var textColor: Int = Color.BLACK // Domyślny kolor tekstu
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -48,6 +54,8 @@ class FaceDetectionActivity : AppCompatActivity() {
             startActivity(intent)
             finishAffinity()
         }
+        val calculateAsymmetryButton = findViewById<Button>(R.id.calculateAsymmetryButton)
+
 
         cameraSelector =
             CameraSelector.Builder().requireLensFacing(CameraSelector.LENS_FACING_FRONT).build()
@@ -102,6 +110,7 @@ class FaceDetectionActivity : AppCompatActivity() {
 
     @SuppressLint("UnsafeOptInUsageError")
     private fun processImageProxy(detector: FaceDetector, imageProxy: ImageProxy) {
+        val calculateAsymmetryButton = findViewById<Button>(R.id.calculateAsymmetryButton)
         val inputImage =
             InputImage.fromMediaImage(imageProxy.image!!, imageProxy.imageInfo.rotationDegrees)
         detector.process(inputImage).addOnSuccessListener { faces ->
@@ -109,6 +118,33 @@ class FaceDetectionActivity : AppCompatActivity() {
             faces.forEach { face ->
                 val faceBox = FaceBox(binding.graphicOverlay, face, imageProxy.image!!.cropRect)
                 //val landmarks = FaceLandmarks(binding.graphicOverlay, face, imageProxy.image!!.cropRect)
+                calculateAsymmetryButton.setOnClickListener {
+                    if (startTime == 0L) {
+                        // Rozpocznij pomiar czasu, jeśli to pierwszy raz
+                        startTime = System.currentTimeMillis()
+                        val asymmetry = faceBox.calculateAsymmetry()
+                        previousAsymmetryResults.add(asymmetry)
+                    } else {
+                        // Jeśli upłynęły co najmniej 2 sekundy, oblicz średnią asymetrię
+                        endTime = System.currentTimeMillis()
+                        if (endTime - startTime >= 2000) {
+                            val averageAsymmetry = calculateAverageAsymmetry()
+                            faceBox.setAsymmetry(averageAsymmetry) // Ustaw asymetrię w obiekcie FaceBox
+//                            asymmetryText = when {
+//                                averageAsymmetry < 1.15 -> "Brak asymetrii"
+//                                averageAsymmetry < 1.6 -> "Niewielka asymetria"
+//                                else -> "Duża asymetria"
+//                            }
+//                            textColor = when {
+//                                averageAsymmetry < 1.15 -> Color.GREEN
+//                                averageAsymmetry < 1.6 -> Color.YELLOW
+//                                else -> Color.RED
+//                            }
+                            asymmetryText = "Asymetria: $averageAsymmetry"
+                        }
+                    }
+                }
+
                 binding.graphicOverlay.add(faceBox)
                 //binding.graphicOverlay.add(landmarks)
             }
@@ -117,6 +153,14 @@ class FaceDetectionActivity : AppCompatActivity() {
         }.addOnCompleteListener {
             imageProxy.close()
         }
+    }
+
+    private fun calculateAverageAsymmetry(): Float {
+        if (previousAsymmetryResults.isEmpty()) {
+            return 0.0f
+        }
+        val sum = previousAsymmetryResults.sum()
+        return sum / previousAsymmetryResults.size
     }
 
     companion object {
