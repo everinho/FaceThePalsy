@@ -24,6 +24,7 @@ import net.simplifiedcoding.FaceThePalsy.CameraXViewModel
 import net.simplifiedcoding.FaceThePalsy.MainActivity
 import net.simplifiedcoding.FaceThePalsy.R
 import net.simplifiedcoding.FaceThePalsy.databinding.ActivityFollowBinding
+import pl.droidsonroids.gif.GifImageView
 import java.util.concurrent.Executors
 
 class FollowActivity : AppCompatActivity() {
@@ -33,6 +34,10 @@ class FollowActivity : AppCompatActivity() {
     private lateinit var processCameraProvider: ProcessCameraProvider
     private lateinit var cameraPreview: Preview
     private lateinit var imageAnalysis: ImageAnalysis
+    private lateinit var startStopButton: Button
+    private lateinit var gifImageView: GifImageView
+    private var isPlaying = false
+
 
     private val cameraXViewModel = viewModels<CameraXViewModel>()
 
@@ -57,7 +62,13 @@ class FollowActivity : AppCompatActivity() {
             "Ćwiczenie 5",
             "Uśmiech - 10 powtórzeń"
         )
-
+    )
+    private val exercises_films = listOf(
+        Exercise("Unoszenie czoła", R.drawable.film1),
+        Exercise("Unoszenie czoła", R.drawable.film1),
+        Exercise("Marszczenie czoła", R.drawable.film2),
+        Exercise("Marszczenie czoła", R.drawable.film2),
+        Exercise("Uśmiech", R.drawable.film3)
     )
 
     private var currentExerciseIndex = 0
@@ -68,6 +79,8 @@ class FollowActivity : AppCompatActivity() {
         binding = ActivityFollowBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        currentExerciseIndex = intent.getIntExtra("currentExerciseIndex", 0)
+
         val nextButton = findViewById<Button>(R.id.nextButton)
         val backButton = findViewById<Button>(R.id.backButton)
         backButton.setOnClickListener {
@@ -76,6 +89,12 @@ class FollowActivity : AppCompatActivity() {
             finishAffinity()
         }
 
+        val playVideoButton = findViewById<Button>(R.id.PlayVideo)
+        playVideoButton.setOnClickListener {
+            val intent = Intent(this, ExerciseActivity::class.java)
+            intent.putExtra("currentExerciseIndex", currentExerciseIndex)
+            startActivity(intent)
+        }
 
         nextButton.setOnClickListener {
             when (currentExerciseIndex) {
@@ -219,8 +238,11 @@ class FollowActivity : AppCompatActivity() {
 
     private fun updateExerciseView() {
         val exercise = exercises[currentExerciseIndex]
-        success=false
+        success = false
         binding.graphicOverlay.clear()
+
+//        val exerciseFilm = exercises_films[currentExerciseIndex]
+//        gifImageView.setImageResource(exerciseFilm.gifResourceId)
     }
 
     private fun updateButtonStates() {
