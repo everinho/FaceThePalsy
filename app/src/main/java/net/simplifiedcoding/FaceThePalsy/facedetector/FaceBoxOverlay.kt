@@ -54,10 +54,6 @@ open class FaceBoxOverlay(context: Context?, attrs: AttributeSet?) : View(contex
         postInvalidate()
     }
 
-//    fun add(faceBox: FaceBox) {
-//        synchronized(lock) { faceBoxes.add(faceBox) }
-//    }
-
     fun add(faceBox: FaceBox) {
         synchronized(lock) { faceBoxes.add(faceBox) }
         postInvalidate()

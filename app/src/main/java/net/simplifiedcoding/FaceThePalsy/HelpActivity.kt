@@ -26,7 +26,8 @@ class HelpActivity : AppCompatActivity()
             "2: Dla odpowiedniej pracy algorytmów ważna jest odpowiednio niewielka odległość twarzy od urządzenia.",
             "3: Oczywista jest konieczność odpowiedniego oświetlenia twarzy, aby umożliwić dokładne wykrycie i pomiar punktów na twarzy przez algorytmy.",
             "4: Najlepsze rezultaty dla skanowania twarzy zostaną uzyskane przy minie łagodnego uśmiechu.",
-            "5: Przed rozpoczęciem każdego ćwiczenia ważne jest przyjęcie mimiki naturalnego, łagodnego uśmiechu."
+            "5: Przed rozpoczęciem każdego ćwiczenia ważne jest przyjęcie mimiki naturalnego, łagodnego uśmiechu.",
+            "6: Dla poprawnego działania aplikacji nie należy gwałtownie zmieniać odległości twarzy od urządzenia w trakcie wykonywania ćwiczeń."
         )
 
         val recyclerView = findViewById<RecyclerView>(R.id.recyclerView)

@@ -153,14 +153,6 @@ class FollowActivity : AppCompatActivity() {
             FaceDetectorOptions.Builder()
                 .setPerformanceMode(FaceDetectorOptions.PERFORMANCE_MODE_FAST)
                 .setContourMode(FaceDetectorOptions.CONTOUR_MODE_ALL)
-                .setClassificationMode(FaceDetectorOptions.CLASSIFICATION_MODE_NONE)
-                .setLandmarkMode(FaceDetectorOptions.LANDMARK_MODE_NONE)
-                .build()
-        )
-        val classification = FaceDetection.getClient(
-            FaceDetectorOptions.Builder()
-                .setPerformanceMode(FaceDetectorOptions.PERFORMANCE_MODE_FAST)
-                .setContourMode(FaceDetectorOptions.CONTOUR_MODE_NONE)
                 .setClassificationMode(FaceDetectorOptions.CLASSIFICATION_MODE_ALL)
                 .setLandmarkMode(FaceDetectorOptions.LANDMARK_MODE_NONE)
                 .build()
@@ -172,7 +164,7 @@ class FollowActivity : AppCompatActivity() {
         val cameraExecutor = Executors.newSingleThreadExecutor()
 
         imageAnalysis.setAnalyzer(cameraExecutor) { imageProxy ->
-            processImageProxy(detector,classification, imageProxy, progressBar)
+            processImageProxy(detector, imageProxy, progressBar)
         }
 
         try {
@@ -185,35 +177,19 @@ class FollowActivity : AppCompatActivity() {
     }
 
     @SuppressLint("UnsafeOptInUsageError")
-    private fun processImageProxy(detector: FaceDetector,classificator: FaceDetector, imageProxy: ImageProxy, progressBar: ProgressBar) {
+    private fun processImageProxy(detector: FaceDetector, imageProxy: ImageProxy, progressBar: ProgressBar) {
         val inputImage = InputImage.fromMediaImage(imageProxy.image!!, imageProxy.imageInfo.rotationDegrees)
 
-        if(currentExerciseIndex==4)
-        {
-            classificator.process(inputImage).addOnSuccessListener { faces ->
-                binding.graphicOverlay.clear()
-                faces.forEach { face ->
-                    val faceBox = FollowBox(binding.graphicOverlay, face, imageProxy.image!!.cropRect, currentExerciseIndex)
-                    binding.graphicOverlay.add(faceBox)
-                }
-            }.addOnFailureListener {
-                it.printStackTrace()
-            }.addOnCompleteListener {
-                imageProxy.close()
+        detector.process(inputImage).addOnSuccessListener { faces ->
+            binding.graphicOverlay.clear()
+            faces.forEach { face ->
+                val faceBox = FollowBox(binding.graphicOverlay, face, imageProxy.image!!.cropRect, currentExerciseIndex)
+                binding.graphicOverlay.add(faceBox)
             }
-        }
-        else{
-            detector.process(inputImage).addOnSuccessListener { faces ->
-                binding.graphicOverlay.clear()
-                faces.forEach { face ->
-                    val faceBox = FollowBox(binding.graphicOverlay, face, imageProxy.image!!.cropRect, currentExerciseIndex)
-                    binding.graphicOverlay.add(faceBox)
-                }
-            }.addOnFailureListener {
-                it.printStackTrace()
-            }.addOnCompleteListener {
-                imageProxy.close()
-            }
+        }.addOnFailureListener {
+            it.printStackTrace()
+        }.addOnCompleteListener {
+            imageProxy.close()
         }
 
         when (currentExerciseIndex) {
@@ -262,6 +238,10 @@ class FollowActivity : AppCompatActivity() {
         FollowBox.right_repeats_2 = 0
         FollowBox.isExercising_left_2 = false
         FollowBox.isExercising_right_2 = false
+        FollowBox.prog_1 = 0F
+        FollowBox.prog_2 = 0F
+        FollowBox.prog_3 = 0F
+        FollowBox.prog_4 = 0F
 
         val alertDialogBuilder = AlertDialog.Builder(this)
         alertDialogBuilder.setTitle("Zestaw treningowy ukończony")

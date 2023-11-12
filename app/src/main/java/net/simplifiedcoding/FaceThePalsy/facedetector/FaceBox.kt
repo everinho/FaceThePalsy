@@ -1,15 +1,22 @@
 package net.simplifiedcoding.FaceThePalsy.facedetector
 
+import android.content.ContentValues.TAG
+import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.PointF
 import android.graphics.Rect
 import android.graphics.Typeface
+import android.util.Log
 import android.widget.Button
 import com.google.mlkit.vision.face.Face
 import com.google.mlkit.vision.face.FaceContour
 import net.simplifiedcoding.FaceThePalsy.R
+import org.json.JSONObject
+import java.io.File
+import java.io.FileWriter
+import java.io.IOException
 import kotlin.math.abs
 import kotlin.math.sqrt
 import kotlin.math.pow
@@ -36,8 +43,8 @@ class FaceBox(
         isAntiAlias = true
     }
 
-
     override fun draw(canvas: Canvas?) {
+
 
         //eyes
         val left_eye = face.getContour(FaceContour.LEFT_EYE)?.points
@@ -482,7 +489,6 @@ class FaceBox(
         val distancesRight = listOf(
             distance_Br, distance_E, distance_I, distance_G, distance_K, distance_U, distance_S, distance_Vr, distance_Qi, distance_Qu, distance_Or, distance_Ol
         )
-
 
         val normalizedDistancesLeft = distancesLeft.map { it / length }
         val normalizedDistancesRight = distancesRight.map { it / length }
