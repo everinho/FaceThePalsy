@@ -24,6 +24,7 @@ import net.simplifiedcoding.FaceThePalsy.CameraXViewModel
 import net.simplifiedcoding.FaceThePalsy.MainActivity
 import net.simplifiedcoding.FaceThePalsy.R
 import net.simplifiedcoding.FaceThePalsy.databinding.ActivityFollowBinding
+import net.simplifiedcoding.FaceThePalsy.facedetector.FaceBox
 import pl.droidsonroids.gif.GifImageView
 import java.util.concurrent.Executors
 
@@ -34,10 +35,6 @@ class FollowActivity : AppCompatActivity() {
     private lateinit var processCameraProvider: ProcessCameraProvider
     private lateinit var cameraPreview: Preview
     private lateinit var imageAnalysis: ImageAnalysis
-    private lateinit var startStopButton: Button
-    private lateinit var gifImageView: GifImageView
-    private var isPlaying = false
-
 
     private val cameraXViewModel = viewModels<CameraXViewModel>()
 
@@ -87,6 +84,32 @@ class FollowActivity : AppCompatActivity() {
             val intent = Intent(this, MainActivity::class.java)
             startActivity(intent)
             finishAffinity()
+        }
+
+        val resetButton = findViewById<Button>(R.id.reset)
+        resetButton.setOnClickListener {
+            when (currentExerciseIndex) {
+                0 -> {
+                    FollowBox.usrednianie_1 = 0
+                    FollowBox.suma_1=0F
+                    FollowBox.prog_1=0F
+                }
+                1 -> {
+                    FollowBox.usrednianie_2 = 0
+                    FollowBox.suma_2=0F
+                    FollowBox.prog_2=0F
+                }
+                2 -> {
+                    FollowBox.usrednianie_3 = 0
+                    FollowBox.suma_3=0F
+                    FollowBox.prog_3=0F
+                }
+                3 -> {
+                    FollowBox.usrednianie_4 = 0
+                    FollowBox.suma_4=0F
+                    FollowBox.prog_4=0F
+                }
+            }
         }
 
         val playVideoButton = findViewById<Button>(R.id.PlayVideo)
@@ -242,6 +265,15 @@ class FollowActivity : AppCompatActivity() {
         FollowBox.prog_2 = 0F
         FollowBox.prog_3 = 0F
         FollowBox.prog_4 = 0F
+        FollowBox.suma_1 = 0F
+        FollowBox.suma_2 = 0F
+        FollowBox.suma_3 = 0F
+        FollowBox.suma_4 = 0F
+        FollowBox.usrednianie_1 = 0
+        FollowBox.usrednianie_2 = 0
+        FollowBox.usrednianie_3 = 0
+        FollowBox.usrednianie_4 = 0
+        FollowBox.sumat = 0F
 
         val alertDialogBuilder = AlertDialog.Builder(this)
         alertDialogBuilder.setTitle("Zestaw treningowy ukończony")

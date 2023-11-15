@@ -16,6 +16,7 @@ import androidx.camera.core.ImageProxy
 import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import com.google.mlkit.vision.common.InputImage
+import com.google.mlkit.vision.face.Face
 import com.google.mlkit.vision.face.FaceDetection
 import com.google.mlkit.vision.face.FaceDetector
 import com.google.mlkit.vision.face.FaceDetectorOptions
@@ -23,6 +24,7 @@ import net.simplifiedcoding.FaceThePalsy.CameraXViewModel
 import net.simplifiedcoding.FaceThePalsy.MainActivity
 import net.simplifiedcoding.FaceThePalsy.R
 import net.simplifiedcoding.FaceThePalsy.databinding.ActivityFaceDetectionBinding
+import net.simplifiedcoding.FaceThePalsy.exercises.FollowBox
 import net.simplifiedcoding.FaceThePalsy.facedetector.FaceBox
 import org.json.JSONObject
 import java.io.File
@@ -46,14 +48,46 @@ class FaceDetectionActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         val backButton = findViewById<Button>(R.id.backButton)
-
         backButton.setOnClickListener {
             val intent = Intent(this, MainActivity::class.java)
             startActivity(intent)
             finishAffinity()
         }
-        val calculateAsymmetryButton = findViewById<Button>(R.id.calculateAsymmetryButton)
 
+        val resetButton = findViewById<Button>(R.id.reset)
+        resetButton.setOnClickListener {
+            FaceBox.usrednianie = 0
+            //val distance_A = distance(point8,point9) //useless
+            FaceBox.distance_Bl = 0F
+            FaceBox.distance_Br = 0F
+            //val distance_C = distance(point10,point7) //useless
+            FaceBox.distance_D = 0F
+            FaceBox.distance_E = 0F
+            FaceBox.distance_F = 0F
+            FaceBox.distance_G = 0F
+            FaceBox.distance_H = 0F
+            FaceBox.distance_I = 0F
+            FaceBox.distance_J = 0F
+            FaceBox.distance_K = 0F
+            FaceBox.distance_R = 0F
+            FaceBox.distance_S = 0F
+            //FaceBox.distance_X = distance(point21,point22) //useless
+            FaceBox.distance_T = 0F
+            FaceBox.distance_U = 0F
+            FaceBox.distance_Vl = 0F
+            FaceBox.distance_Vr = 0F
+            //FaceBox.distance_W = distance(point23,point24) //useless
+            FaceBox.distance_Nl = 0F
+            FaceBox.distance_Nr = 0F
+            FaceBox.distance_Ol = 0F
+            FaceBox.distance_Or = 0F
+            FaceBox.distance_Pi = 0F
+            FaceBox.distance_Pu = 0F
+            FaceBox.distance_Qi = 0F
+            FaceBox.distance_Qu = 0F
+            FaceBox.calculated = false
+            FaceBox.asymmetry = 0f
+        }
 
         cameraSelector = CameraSelector.Builder().requireLensFacing(CameraSelector.LENS_FACING_FRONT).build()
         cameraXViewModel.value.processCameraProvider.observe(this) { provider ->

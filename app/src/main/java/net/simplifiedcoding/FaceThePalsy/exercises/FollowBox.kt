@@ -257,7 +257,8 @@ class FollowBox(
                 }
                 val proportion = leftEyebrowEyeDistance!! / length
                 val leftDistanceText = "Dystans: ${proportion?.toString() ?: "N/A"}"
-                canvas?.drawText("Ćwiczenie 3 - mróżenie prawego oka", 50F, 250F, paint_text)
+                //canvas?.drawText("Ćwiczenie 3 - mróżenie prawego oka", 50F, 250F, paint_text)
+                canvas?.drawText("Iteracja: ${usrednianie_3?.toString() ?: "N/A"}", 50F, 250F, paint_text)
                 canvas?.drawText(leftDistanceText, 50F, 350F, paint_text)
                 canvas?.drawText("Prog: ${prog_3?.toString() ?: "N/A"}", 50F, 450F, paint_text)
 
@@ -365,7 +366,8 @@ class FollowBox(
                 }
                 val proportion = rightEyebrowEyeDistance!! /length
                 val rightDistanceText = "Dystans: ${proportion?.toString() ?: "N/A"}"
-                canvas?.drawText("Ćwiczenie 2 - Unoszenie lewej powieki", 50F, 250F, paint_text)
+                //canvas?.drawText("Ćwiczenie 2 - Unoszenie lewej powieki", 50F, 250F, paint_text)
+                canvas?.drawText("Iteracja: ${usrednianie_2?.toString() ?: "N/A"}", 50F, 250F, paint_text)
                 canvas?.drawText("Prog: ${prog_2?.toString() ?: "N/A"}", 50F, 350F, paint_text)
                 canvas?.drawText(rightDistanceText, 50F, 450F, paint_text)
 
@@ -415,7 +417,8 @@ class FollowBox(
                 }
                 val proportion = rightEyebrowEyeDistance!! /length
                 val rightDistanceText = "Dystans: ${proportion?.toString() ?: "N/A"}"
-                canvas?.drawText("Ćwiczenie 4 - mróżenie lewego oka", 50F, 250F, paint_text)
+                //canvas?.drawText("Ćwiczenie 4 - mróżenie lewego oka", 50F, 250F, paint_text)
+                canvas?.drawText("Iteracja: ${usrednianie_4?.toString() ?: "N/A"}", 50F, 250F, paint_text)
                 canvas?.drawText("Prog: ${prog_4?.toString() ?: "N/A"}", 50F, 350F, paint_text)
                 canvas?.drawText(rightDistanceText, 50F, 450F, paint_text)
 
