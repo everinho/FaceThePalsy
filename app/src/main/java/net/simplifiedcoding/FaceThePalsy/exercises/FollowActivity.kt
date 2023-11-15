@@ -114,7 +114,7 @@ class FollowActivity : AppCompatActivity() {
                     if(FollowBox.smile_repeats>=10) success=true
                 }
             }
-            if (currentExerciseIndex < exercises.size - 1 && success) {
+            if (currentExerciseIndex < exercises.size - 1 && !success) {
                 currentExerciseIndex+=1
                 updateExerciseView()
                 updateButtonStates()

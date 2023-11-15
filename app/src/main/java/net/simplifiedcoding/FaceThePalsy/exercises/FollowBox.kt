@@ -35,6 +35,15 @@ class FollowBox(
         var prog_2: Float = 0F
         var prog_3: Float = 0F
         var prog_4: Float = 0F
+        var suma_1: Float = 0F
+        var suma_2: Float = 0F
+        var suma_3: Float = 0F
+        var suma_4: Float = 0F
+        var sumat: Float = 0F
+        var usrednianie_1: Int = 0
+        var usrednianie_2: Int = 0
+        var usrednianie_3: Int = 0
+        var usrednianie_4: Int = 0
     }
 
     private val paint = Paint().apply {
@@ -161,17 +170,42 @@ class FollowBox(
 
             if(id == 0)
             {
-                if(left_repeats==0 && prog_1==0F)
+                if(usrednianie_1<30)
                 {
-                    prog_1 = calculateDistance(
-                        leftEyebrowTopPoints,
-                        leftEye
-                    )!!
-                    prog_1 /= length
+                    if(left_repeats==0 && prog_1==0F)
+                    {
+                        sumat = calculateDistance(
+                            leftEyebrowTopPoints,
+                            leftEye
+                        )!!
+                        sumat /= length
+                        suma_1 += sumat
+                        usrednianie_1++
+                    }
+                }
+                else {
+                    prog_1= suma_1/30
+                    sumat = 0F
+                    val proportion = leftEyebrowEyeDistance!! / length
+                    if (proportion > 1.1 * prog_1) {
+                        if (!isExercising_left) {
+                            isExercising_left = true
+                            if (left_repeats < 10) {
+                                left_repeats += 1
+                            }
+                        }
+                    } else if(proportion <= prog_1) {
+                        isExercising_left = false
+                    }
+
+                    if (left_repeats >= 10) {
+                        canvas?.drawText("Ćwiczenie ukończone!", 50F, 650F, paint_text_success)
+                    }
                 }
                 val proportion = leftEyebrowEyeDistance!! / length
                 val leftDistanceText = "Dystans: ${proportion?.toString() ?: "N/A"}"
-                canvas?.drawText("Ćwiczenie 1 - unoszenie prawej powieki", 50F, 250F, paint_text)
+                //canvas?.drawText("Ćwiczenie 1 - unoszenie prawej powieki", 50F, 250F, paint_text)
+                canvas?.drawText("Iteracja: ${usrednianie_1?.toString() ?: "N/A"}", 50F, 250F, paint_text)
                 canvas?.drawText("Prog: ${prog_1?.toString() ?: "N/A"}", 50F, 350F, paint_text)
                 canvas?.drawText(leftDistanceText, 50F, 450F, paint_text)
 
@@ -184,32 +218,43 @@ class FollowBox(
                 val repetitionsText = "Powtórzenia: $left_repeats / 10"
                 canvas?.drawText(repetitionsText, 50F, 550F, paint_text)
 
-                if (proportion > 1.1 * prog_1) {
-                    if (!isExercising_left) {
-                        isExercising_left = true
-                        if (left_repeats < 10) {
-                            left_repeats += 1
-                        }
-                    }
-                } else if(proportion <= prog_1) {
-                    isExercising_left = false
-                }
-
-                if (left_repeats >= 10) {
-                    canvas?.drawText("Ćwiczenie ukończone!", 50F, 650F, paint_text_success)
-                }
             }
             else if(id == 2)
             {
-                if(left_repeats_2==0 && prog_3==0F)
+                if(usrednianie_3<30)
                 {
-                    prog_3 = calculateDistance(
-                        leftEyebrowTopPoints,
-                        leftEye
-                    )!!
-                    prog_3 /= length
+                    if(left_repeats_2==0 && prog_3==0F)
+                    {
+                        sumat = calculateDistance(
+                            leftEyebrowTopPoints,
+                            leftEye
+                        )!!
+                        sumat /= length
+                        suma_3 += sumat
+                        usrednianie_3++
+                    }
                 }
-                //val leftDistanceText = "Right Distance: ${leftEyebrowEyeDistance?.toString() ?: "N/A"}"
+                else
+                {
+                    prog_3 = suma_3 / 30
+                    sumat = 0F
+                    val proportion = leftEyebrowEyeDistance!! / length
+
+                    if (proportion < 0.9*prog_3) {
+                        if (!isExercising_left_2) {
+                            isExercising_left_2 = true
+                            if (left_repeats_2 < 10) {
+                                left_repeats_2 += 1
+                            }
+                        }
+                    } else if(proportion >=prog_3) {
+                        isExercising_left_2 = false
+                    }
+
+                    if (left_repeats_2 >= 10) {
+                        canvas?.drawText("Ćwiczenie ukończone!", 50F, 650F, paint_text_success)
+                    }
+                }
                 val proportion = leftEyebrowEyeDistance!! / length
                 val leftDistanceText = "Dystans: ${proportion?.toString() ?: "N/A"}"
                 canvas?.drawText("Ćwiczenie 3 - mróżenie prawego oka", 50F, 250F, paint_text)
@@ -224,23 +269,7 @@ class FollowBox(
 
                 val repetitionsText = "Powtórzenia: $left_repeats_2 / 10"
                 canvas?.drawText(repetitionsText, 50F, 550F, paint_text)
-
-                if (proportion < 0.9*prog_3) {
-                    if (!isExercising_left_2) {
-                        isExercising_left_2 = true
-                        if (left_repeats_2 < 10) {
-                            left_repeats_2 += 1
-                        }
-                    }
-                } else if(proportion >=prog_3) {
-                    isExercising_left_2 = false
-                }
-
-                if (left_repeats_2 >= 10) {
-                    canvas?.drawText("Ćwiczenie ukończone!", 50F, 650F, paint_text_success)
-                }
             }
-
         }
 
         if(id == 1 || id == 3)
@@ -302,20 +331,46 @@ class FollowBox(
 
             if(id == 1)
             {
-                if(left_repeats_2==0 && prog_2==0F)
+                if(usrednianie_2<30)
                 {
-                    prog_2 = calculateDistance(
-                        rightEyebrowTopPoints,
-                        rightEye
-                    )!!
-                    prog_2 /= length
+                    if(left_repeats_2==0 && prog_2==0F)
+                    {
+                        sumat = calculateDistance(
+                            rightEyebrowTopPoints,
+                            rightEye
+                        )!!
+                        sumat /= length
+                        suma_2 += sumat
+                        usrednianie_2++
+                    }
+                }else
+                {
+                    prog_2 = suma_2 / 30
+                    sumat = 0F
+                    val proportion = rightEyebrowEyeDistance!! /length
+
+                    if (proportion > 1.1*prog_2) {
+                        if (!isExercising_right) {
+                            isExercising_right = true
+                            if (right_repeats < 10) {
+                                right_repeats += 1
+                            }
+                        }
+                    } else if(proportion <= prog_2) {
+                        isExercising_right = false
+                    }
+                    if (right_repeats >= 10) {
+                        canvas?.drawText("Ćwiczenie ukończone!", 50F, 650F, paint_text_success)
+                    }
                 }
-                //val rightDistanceText = "Left Distance: ${rightEyebrowEyeDistance?.toString() ?: "N/A"}"
                 val proportion = rightEyebrowEyeDistance!! /length
                 val rightDistanceText = "Dystans: ${proportion?.toString() ?: "N/A"}"
                 canvas?.drawText("Ćwiczenie 2 - Unoszenie lewej powieki", 50F, 250F, paint_text)
                 canvas?.drawText("Prog: ${prog_2?.toString() ?: "N/A"}", 50F, 350F, paint_text)
                 canvas?.drawText(rightDistanceText, 50F, 450F, paint_text)
+
+                val repetitionsText = "Powtórzenia: $right_repeats / 10"
+                canvas?.drawText(repetitionsText, 50F, 550F, paint_text)
 
                 if(right_repeats<10)
                 {
@@ -323,34 +378,41 @@ class FollowBox(
                     else canvas?.drawText("Opuść powiekę", 600F, 350F, paint_text)
                 }
 
-                val repetitionsText = "Powtórzenia: $right_repeats / 10"
-                canvas?.drawText(repetitionsText, 50F, 550F, paint_text)
-
-                if (proportion > 1.1*prog_2) {
-                    if (!isExercising_right) {
-                        isExercising_right = true
-                        if (right_repeats < 10) {
-                            right_repeats += 1
-                        }
-                    }
-                } else if(proportion <= prog_2) {
-                    isExercising_right = false
-                }
-                if (right_repeats >= 10) {
-                    canvas?.drawText("Ćwiczenie ukończone!", 50F, 650F, paint_text_success)
-                }
             }
             else if (id == 3)
             {
-                if(right_repeats_2==0 && prog_4==0F)
+                if(usrednianie_4<30)
                 {
-                    prog_4 = calculateDistance(
-                        rightEyebrowTopPoints,
-                        rightEye
-                    )!!
-                    prog_4 /= length
+                    if(right_repeats_2==0 && prog_4==0F)
+                    {
+                        sumat = calculateDistance(
+                            rightEyebrowTopPoints,
+                            rightEye
+                        )!!
+                        sumat /= length
+                        suma_4 += sumat
+                        usrednianie_4++
+                    }
                 }
-                //val rightDistanceText = "Left Distance: ${rightEyebrowEyeDistance?.toString() ?: "N/A"}"
+                else
+                {
+                    prog_4 = suma_4 / 30
+                    sumat = 0f
+                    val proportion = rightEyebrowEyeDistance!! /length
+                    if (proportion <= 0.9*prog_4) {
+                        if (!isExercising_right_2) {
+                            isExercising_right_2 = true
+                            if (right_repeats_2 < 10) {
+                                right_repeats_2 += 1
+                            }
+                        }
+                    } else if(proportion >= prog_4) {
+                        isExercising_right_2 = false
+                    }
+                    if (right_repeats_2 >= 10) {
+                        canvas?.drawText("Ćwiczenie ukończone!", 50F, 650F, paint_text_success)
+                    }
+                }
                 val proportion = rightEyebrowEyeDistance!! /length
                 val rightDistanceText = "Dystans: ${proportion?.toString() ?: "N/A"}"
                 canvas?.drawText("Ćwiczenie 4 - mróżenie lewego oka", 50F, 250F, paint_text)
@@ -366,19 +428,6 @@ class FollowBox(
                 val repetitionsText = "Powtórzenia: $right_repeats_2 / 10"
                 canvas?.drawText(repetitionsText, 50F, 550F, paint_text)
 
-                if (proportion <= 0.9*prog_4) {
-                    if (!isExercising_right_2) {
-                        isExercising_right_2 = true
-                        if (right_repeats_2 < 10) {
-                            right_repeats_2 += 1
-                        }
-                    }
-                } else if(proportion >= prog_4) {
-                    isExercising_right_2 = false
-                }
-                if (right_repeats_2 >= 10) {
-                    canvas?.drawText("Ćwiczenie ukończone!", 50F, 650F, paint_text_success)
-                }
             }
         }
 
