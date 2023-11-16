@@ -22,26 +22,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-            <ImageButton
-                android:id="@+id/profile"
-                android:layout_width="match_parent"
-                android:layout_height="55dp"
-                android:layout_marginTop="10dp"
-                android:src="@drawable/profile"
-                android:background="?android:attr/selectableItemBackground"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"/>
-
-        <ImageButton
-            android:id="@+id/schedule"
-            android:layout_width="match_parent"
-            android:layout_height="55dp"
-            android:layout_marginTop="10dp"
-            android:src="@drawable/schedule"
-            android:background="?android:attr/selectableItemBackground"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"/>
-
         <TextView
             android:id="@+id/welcomeLabel"
             android:layout_width="wrap_content"
@@ -51,6 +31,28 @@
             android:padding="7dp"
             android:textStyle="bold"
             android:textSize="27dp"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="10dp">
+
+            <ImageButton
+                android:id="@+id/profile"
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:src="@drawable/profile"
+                android:background="?android:attr/selectableItemBackground"/>
+
+            <ImageButton
+                android:id="@+id/schedule"
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:layout_marginLeft="180dp"
+                android:src="@drawable/schedule"
+                android:background="?android:attr/selectableItemBackground"/>
+        </LinearLayout>
 
         <Button
             android:id="@+id/button_face_detect"

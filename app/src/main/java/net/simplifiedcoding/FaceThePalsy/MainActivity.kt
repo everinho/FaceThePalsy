@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
+import android.widget.ImageButton
 import androidx.activity.result.contract.ActivityResultContracts.*
 import net.simplifiedcoding.FaceThePalsy.databinding.ActivityMainBinding
 import net.simplifiedcoding.FaceThePalsy.exercises.ExerciseActivity
@@ -37,6 +38,18 @@ class MainActivity : AppCompatActivity() {
         val settingsButton = findViewById<Button>(R.id.settings)
         settingsButton.setOnClickListener {
             val intent = Intent(this, SettingsActivity::class.java)
+            startActivity(intent)
+        }
+
+        val scheduleButton = findViewById<ImageButton>(R.id.schedule)
+        scheduleButton.setOnClickListener {
+            val intent = Intent(this, ScheduleActivity::class.java)
+            startActivity(intent)
+        }
+
+        val profileButton = findViewById<ImageButton>(R.id.profile)
+        profileButton.setOnClickListener {
+            val intent = Intent(this, ProfileActivity::class.java)
             startActivity(intent)
         }
 
