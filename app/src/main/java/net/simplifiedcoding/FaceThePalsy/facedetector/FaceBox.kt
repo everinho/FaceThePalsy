@@ -12,7 +12,9 @@ import android.util.Log
 import android.widget.Button
 import com.google.mlkit.vision.face.Face
 import com.google.mlkit.vision.face.FaceContour
+import net.simplifiedcoding.FaceThePalsy.ProfileActivity
 import net.simplifiedcoding.FaceThePalsy.R
+import net.simplifiedcoding.FaceThePalsy.ScheduleActivity
 import net.simplifiedcoding.FaceThePalsy.exercises.FollowBox
 import org.json.JSONObject
 import java.io.File
@@ -303,11 +305,15 @@ class FaceBox(
 
                 val asymmetryText: String
 
-                if (asymmetry < 2.4) {
+                if (asymmetry < 1.6) {
                     asymmetryText = "Brak asymetrii"
                     textColor = Color.GREEN
-                } else if (asymmetry < 2.7) {
+                }
+                else if (asymmetry < 2.2) {
                     asymmetryText = "Niewielka asymetria"
+                    textColor = Color.GREEN
+                } else if (asymmetry < 2.95) {
+                    asymmetryText = "Zauważalna asymetria"
                     textColor = Color.YELLOW
                 } else {
                     asymmetryText = "Duża asymetria"
@@ -315,6 +321,8 @@ class FaceBox(
                 }
                 canvas?.drawText(asymmetrical, textX, textY, paint_text.apply { color = textColor })
                 canvas?.drawText(asymmetryText, textX, textY + 80, paint_text.apply { color = textColor })
+                ScheduleActivity.assymetry = asymmetry
+                ProfileActivity.assymetry = asymmetry
             }
         }
 
