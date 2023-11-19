@@ -9,24 +9,26 @@ import android.graphics.PointF
 import android.graphics.Rect
 import android.graphics.Typeface
 import android.util.Log
-import android.widget.Button
+import com.google.gson.Gson
+import com.google.gson.JsonArray
+import com.google.gson.JsonObject
 import com.google.mlkit.vision.face.Face
 import com.google.mlkit.vision.face.FaceContour
 import net.simplifiedcoding.FaceThePalsy.ProfileActivity
-import net.simplifiedcoding.FaceThePalsy.R
 import net.simplifiedcoding.FaceThePalsy.ScheduleActivity
-import net.simplifiedcoding.FaceThePalsy.exercises.FollowBox
-import org.json.JSONObject
+import java.io.BufferedWriter
 import java.io.File
 import java.io.FileWriter
-import java.io.IOException
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 import kotlin.math.abs
-import kotlin.math.sqrt
 import kotlin.math.pow
-
+import kotlin.math.sqrt
 
 class FaceBox(
     overlay: FaceBoxOverlay,
+    private val context: Context,
     private val face: Face,
     private val imageRect: Rect
 ) : FaceBoxOverlay.FaceBox(overlay) {
@@ -175,7 +177,8 @@ class FaceBox(
 
         canvas?.drawText("Iteracja: ${usrednianie?.toString() ?: "N/A"}", 50F, 250F, paint_text)
 
-        if(usrednianie<30)
+        val iterations = 30
+        if(usrednianie<iterations)
         {
             //val distance_A = distance(point8,point9) //useless
             distance_Bl += distance(point1,point2)
@@ -212,33 +215,33 @@ class FaceBox(
             if(!calculated)
             {
                 //val distance_A = distance(point8,point9) //useless
-                distance_Bl /= 30
-                distance_Br /= 30
+                distance_Bl /= iterations
+                distance_Br /= iterations
                 //val distance_C = distance(point10,point7) //useless
-                distance_D /= 30
-                distance_E /= 30
-                distance_F /= 30
-                distance_G /= 30
-                distance_H /= 30
-                distance_I /= 30
-                distance_J /= 30
-                distance_K /= 30
-                distance_R /= 30
-                distance_S /= 30
+                distance_D /= iterations
+                distance_E /= iterations
+                distance_F /= iterations
+                distance_G /= iterations
+                distance_H /= iterations
+                distance_I /= iterations
+                distance_J /= iterations
+                distance_K /= iterations
+                distance_R /= iterations
+                distance_S /= iterations
                 //val distance_X = distance(point21,point22) //useless
-                distance_T /= 30
-                distance_U /= 30
-                distance_Vl /= 30
-                distance_Vr /= 30
+                distance_T /= iterations
+                distance_U /= iterations
+                distance_Vl /= iterations
+                distance_Vr /= iterations
                 //val distance_W = distance(point23,point24) //useless
-                distance_Nl /= 30
-                distance_Nr /= 30
-                distance_Ol /= 30
-                distance_Or /= 30
-                distance_Pi /= 30
-                distance_Pu /= 30
-                distance_Qi /= 30
-                distance_Qu /= 30
+                distance_Nl /= iterations
+                distance_Nr /= iterations
+                distance_Ol /= iterations
+                distance_Or /= iterations
+                distance_Pi /= iterations
+                distance_Pu /= iterations
+                distance_Qi /= iterations
+                distance_Qu /= iterations
 
                 val pointA = left_eye?.getOrNull(0)
                 val pointB = right_eye?.getOrNull(8)
@@ -323,9 +326,51 @@ class FaceBox(
                 canvas?.drawText(asymmetryText, textX, textY + 80, paint_text.apply { color = textColor })
                 ScheduleActivity.assymetry = asymmetry
                 ProfileActivity.assymetry = asymmetry
+                saveAsymmetryToJson(asymmetry)
+
             }
         }
 
+    }
+
+    private fun saveAsymmetryToJson(asymmetry: Float) {
+        try {
+            // Tworzenie obiektu JSON za pomocą Gson
+            val gson = Gson()
+            val jsonArray = JsonArray()
+
+            // Tworzenie obiektu JSON z danymi
+            val jsonObject = JsonObject()
+            jsonObject.addProperty("asymmetry", asymmetry)
+            jsonObject.addProperty("date", getCurrentDate())
+
+            // Dodanie obiektu do tablicy
+            jsonArray.add(jsonObject)
+
+            // Konwertowanie do formatu JSON
+            val jsonString = gson.toJson(jsonArray)
+
+            // Zapis do pliku
+            val fileName = "asymmetry_data.json"
+            val file = File(context.getExternalFilesDir(null), fileName)
+            val fileWriter = FileWriter(file, true) // 'true' oznacza, że dane będą dopisywane do istniejącego pliku
+            val bufferedWriter = BufferedWriter(fileWriter)
+            bufferedWriter.append(jsonString)
+            bufferedWriter.newLine() // Nowa linia dla każdej nowej porcji danych
+            bufferedWriter.close()
+
+            Log.d(TAG, "Zapisano dane do pliku JSON: $jsonString")
+        } catch (e: Exception) {
+            Log.e(TAG, "Błąd podczas zapisywania danych do pliku JSON", e)
+        }
+    }
+
+
+
+    private fun getCurrentDate(): String {
+        val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+        val date = Date()
+        return dateFormat.format(date)
     }
 
     private fun xyz(canvas: Canvas?,point1: PointF?, point2: PointF?){
