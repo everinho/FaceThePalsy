@@ -1,14 +1,15 @@
 package net.simplifiedcoding.FaceThePalsy.facedetector
 
-import FaceLandmarks
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
-import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
+import android.widget.ProgressBar
+import android.widget.Toast
 import androidx.activity.viewModels
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageAnalysis
@@ -24,12 +25,8 @@ import net.simplifiedcoding.FaceThePalsy.CameraXViewModel
 import net.simplifiedcoding.FaceThePalsy.MainActivity
 import net.simplifiedcoding.FaceThePalsy.R
 import net.simplifiedcoding.FaceThePalsy.databinding.ActivityFaceDetectionBinding
+import net.simplifiedcoding.FaceThePalsy.exercises.FollowActivity
 import net.simplifiedcoding.FaceThePalsy.exercises.FollowBox
-import net.simplifiedcoding.FaceThePalsy.facedetector.FaceBox
-import org.json.JSONObject
-import java.io.File
-import java.io.FileWriter
-import java.io.IOException
 import java.util.concurrent.Executors
 
 class FaceDetectionActivity : AppCompatActivity() {
@@ -39,6 +36,11 @@ class FaceDetectionActivity : AppCompatActivity() {
     private lateinit var processCameraProvider: ProcessCameraProvider
     private lateinit var cameraPreview: Preview
     private lateinit var imageAnalysis: ImageAnalysis
+    private lateinit var progressBar: ProgressBar
+    private lateinit var alertDialog: AlertDialog
+    private var isDialogShown = false
+
+
 
     private val cameraXViewModel = viewModels<CameraXViewModel>()
 
@@ -87,6 +89,7 @@ class FaceDetectionActivity : AppCompatActivity() {
             FaceBox.distance_Qu = 0F
             FaceBox.calculated = false
             FaceBox.asymmetry = 0f
+            isDialogShown = false
         }
 
         cameraSelector = CameraSelector.Builder().requireLensFacing(CameraSelector.LENS_FACING_FRONT).build()
@@ -95,6 +98,20 @@ class FaceDetectionActivity : AppCompatActivity() {
             bindCameraPreview()
             bindInputAnalyser()
         }
+
+        val dialogBuilder = AlertDialog.Builder(this)
+        dialogBuilder.setMessage("Przyjmij odpowiednią mimikę i wykadruj twarz.")
+            .setCancelable(false)
+            .setPositiveButton("OK") { dialog, _ ->
+                dialog.dismiss()
+                isDialogShown = true
+                startFaceDetection()
+            }
+
+        alertDialog = dialogBuilder.create()
+
+        // Wywołanie dialogu po otwarciu aktywności
+        alertDialog.show()
     }
 
     private fun bindCameraPreview() {
@@ -111,36 +128,74 @@ class FaceDetectionActivity : AppCompatActivity() {
         }
     }
 
-    private fun bindInputAnalyser() {
-        val detector = FaceDetection.getClient(
-            FaceDetectorOptions.Builder()
-                .setPerformanceMode(FaceDetectorOptions.PERFORMANCE_MODE_FAST)
-                .setContourMode(FaceDetectorOptions.CONTOUR_MODE_ALL)
-                .setClassificationMode(FaceDetectorOptions.CLASSIFICATION_MODE_NONE)
-                .setLandmarkMode(FaceDetectorOptions.LANDMARK_MODE_ALL)
+    private fun startFaceDetection() {
+        if (isDialogShown) {
+            val progressBar = findViewById<ProgressBar>(R.id.progress_bar)
+            val detector = FaceDetection.getClient(
+                FaceDetectorOptions.Builder()
+                    .setPerformanceMode(FaceDetectorOptions.PERFORMANCE_MODE_FAST)
+                    .setContourMode(FaceDetectorOptions.CONTOUR_MODE_ALL)
+                    .setClassificationMode(FaceDetectorOptions.CLASSIFICATION_MODE_NONE)
+                    .setLandmarkMode(FaceDetectorOptions.LANDMARK_MODE_ALL)
+                    .build()
+            )
+
+            imageAnalysis = ImageAnalysis.Builder()
+                .setTargetRotation(binding.previewView.display.rotation)
                 .build()
-        )
-        imageAnalysis = ImageAnalysis.Builder()
-            .setTargetRotation(binding.previewView.display.rotation)
-            .build()
 
-        val cameraExecutor = Executors.newSingleThreadExecutor()
+            val cameraExecutor = Executors.newSingleThreadExecutor()
 
-        imageAnalysis.setAnalyzer(cameraExecutor) { imageProxy ->
-            processImageProxy(detector, imageProxy)
-        }
+            imageAnalysis.setAnalyzer(cameraExecutor) { imageProxy ->
+                processImageProxy(detector, imageProxy, progressBar)
+            }
 
-        try {
-            processCameraProvider.bindToLifecycle(this, cameraSelector, imageAnalysis)
-        } catch (illegalStateException: IllegalStateException) {
-            Log.e(TAG, illegalStateException.message ?: "IllegalStateException")
-        } catch (illegalArgumentException: IllegalArgumentException) {
-            Log.e(TAG, illegalArgumentException.message ?: "IllegalArgumentException")
+            try {
+                processCameraProvider.bindToLifecycle(this, cameraSelector, imageAnalysis)
+            } catch (illegalStateException: IllegalStateException) {
+                Log.e(TAG, illegalStateException.message ?: "IllegalStateException")
+            } catch (illegalArgumentException: IllegalArgumentException) {
+                Log.e(TAG, illegalArgumentException.message ?: "IllegalArgumentException")
+            }
         }
     }
 
+    private fun bindInputAnalyser() {
+        startFaceDetection()
+    }
+
+//    private fun bindInputAnalyser() {
+//        val progressBar = findViewById<ProgressBar>(R.id.progress_bar)
+//        val detector = FaceDetection.getClient(
+//            FaceDetectorOptions.Builder()
+//                .setPerformanceMode(FaceDetectorOptions.PERFORMANCE_MODE_FAST)
+//                .setContourMode(FaceDetectorOptions.CONTOUR_MODE_ALL)
+//                .setClassificationMode(FaceDetectorOptions.CLASSIFICATION_MODE_NONE)
+//                .setLandmarkMode(FaceDetectorOptions.LANDMARK_MODE_ALL)
+//                .build()
+//        )
+//        imageAnalysis = ImageAnalysis.Builder()
+//            .setTargetRotation(binding.previewView.display.rotation)
+//            .build()
+//
+//        val cameraExecutor = Executors.newSingleThreadExecutor()
+//
+//        imageAnalysis.setAnalyzer(cameraExecutor) { imageProxy ->
+//            processImageProxy(detector, imageProxy, progressBar)
+//        }
+//
+//        try {
+//            processCameraProvider.bindToLifecycle(this, cameraSelector, imageAnalysis)
+//        } catch (illegalStateException: IllegalStateException) {
+//            Log.e(TAG, illegalStateException.message ?: "IllegalStateException")
+//        } catch (illegalArgumentException: IllegalArgumentException) {
+//            Log.e(TAG, illegalArgumentException.message ?: "IllegalArgumentException")
+//        }
+//
+//    }
+
     @SuppressLint("UnsafeOptInUsageError")
-    private fun processImageProxy(detector: FaceDetector, imageProxy: ImageProxy) {
+    private fun processImageProxy(detector: FaceDetector, imageProxy: ImageProxy, progressBar: ProgressBar) {
         val inputImage =
             InputImage.fromMediaImage(imageProxy.image!!, imageProxy.imageInfo.rotationDegrees)
         detector.process(inputImage).addOnSuccessListener { faces ->
@@ -156,27 +211,7 @@ class FaceDetectionActivity : AppCompatActivity() {
         }.addOnCompleteListener {
             imageProxy.close()
         }
-    }
-
-    private fun saveAsymmetryResultToJson(asymmetryResult: Float) {
-        try {
-            // Tworzenie obiektu JSON
-            val jsonObject = JSONObject()
-            jsonObject.put("asymmetry", asymmetryResult)
-
-            // Zapis do pliku JSON
-            val fileName = "asymmetry_result.json"
-            val file = File(filesDir, fileName)
-
-            FileWriter(file).use { fileWriter ->
-                fileWriter.write(jsonObject.toString())
-            }
-
-            Log.d(TAG, "Wynik asymetrii zapisany do pliku: $fileName")
-        } catch (e: IOException) {
-            e.printStackTrace()
-            Log.e(TAG, "Błąd podczas zapisywania wyniku asymetrii do pliku JSON")
-        }
+        progressBar.progress = ((FaceBox.usrednianie.toFloat()/ 30)*100).toInt()
     }
 
     companion object {

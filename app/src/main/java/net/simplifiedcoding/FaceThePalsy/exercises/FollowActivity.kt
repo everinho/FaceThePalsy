@@ -5,6 +5,7 @@ import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.provider.ContactsContract.Profile
 import android.util.Log
 import android.widget.Button
 import android.widget.ProgressBar
@@ -22,6 +23,7 @@ import com.google.mlkit.vision.face.FaceDetector
 import com.google.mlkit.vision.face.FaceDetectorOptions
 import net.simplifiedcoding.FaceThePalsy.CameraXViewModel
 import net.simplifiedcoding.FaceThePalsy.MainActivity
+import net.simplifiedcoding.FaceThePalsy.ProfileActivity
 import net.simplifiedcoding.FaceThePalsy.R
 import net.simplifiedcoding.FaceThePalsy.databinding.ActivityFollowBinding
 import net.simplifiedcoding.FaceThePalsy.facedetector.FaceBox
@@ -131,12 +133,13 @@ class FollowActivity : AppCompatActivity() {
                     if(FollowBox.smile_repeats>=repeats) success=true
                 }
             }
-            if (currentExerciseIndex < exercises.size - 1 && success) {
+            if (currentExerciseIndex < exercises.size - 1 && !success) {
                 currentExerciseIndex+=1
                 updateExerciseView()
                 updateButtonStates()
             } else if(currentExerciseIndex == exercises.size -1 && success){
                 showTrainingCompletedDialog()
+                ProfileActivity.completedTrainings += 1
             }
         }
 
