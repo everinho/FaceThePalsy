@@ -38,34 +38,28 @@ class FollowActivity : AppCompatActivity() {
 
     private val cameraXViewModel = viewModels<CameraXViewModel>()
 
+
     private val exercises = listOf(
         ExerciseModel(
             "Ćwiczenie 1",
-            "Unoszenie czoła (jedna strona) - 10 powtórzeń"
+            "Unoszenie czoła (jedna strona)"
         ),
         ExerciseModel(
             "Ćwiczenie 2",
-            "Unoszenie czoła (druga strona) - 10 powtórzeń"
+            "Unoszenie czoła (druga strona)"
         ),
         ExerciseModel(
             "Ćwiczenie 3",
-            "Marszczenie czoła (jedna strona) - 10 powtórzeń"
+            "Marszczenie czoła (jedna strona)"
         ),
         ExerciseModel(
             "Ćwiczenie 4",
-            "Marszczenie czoła (druga strona) - 10 powtórzeń"
+            "Marszczenie czoła (druga strona)"
         ),
         ExerciseModel(
             "Ćwiczenie 5",
-            "Uśmiech - 10 powtórzeń"
+            "Uśmiech"
         )
-    )
-    private val exercises_films = listOf(
-        Exercise("Unoszenie czoła", R.drawable.film1),
-        Exercise("Unoszenie czoła", R.drawable.film1),
-        Exercise("Marszczenie czoła", R.drawable.film2),
-        Exercise("Marszczenie czoła", R.drawable.film2),
-        Exercise("Uśmiech", R.drawable.film3)
     )
 
     private var currentExerciseIndex = 0
@@ -122,22 +116,22 @@ class FollowActivity : AppCompatActivity() {
         nextButton.setOnClickListener {
             when (currentExerciseIndex) {
                 0 -> {
-                    if(FollowBox.left_repeats>=10) success=true
+                    if(FollowBox.left_repeats>= repeats) success=true
                 }
                 1 -> {
-                    if(FollowBox.right_repeats>=10) success=true
+                    if(FollowBox.right_repeats>=repeats) success=true
                 }
                 2 -> {
-                    if(FollowBox.left_repeats_2>=10) success=true
+                    if(FollowBox.left_repeats_2>=repeats) success=true
                 }
                 3 -> {
-                    if(FollowBox.right_repeats_2>=10) success=true
+                    if(FollowBox.right_repeats_2>=repeats) success=true
                 }
                 4 -> {
-                    if(FollowBox.smile_repeats>=10) success=true
+                    if(FollowBox.smile_repeats>=repeats) success=true
                 }
             }
-            if (currentExerciseIndex < exercises.size - 1 && !success) {
+            if (currentExerciseIndex < exercises.size - 1 && success) {
                 currentExerciseIndex+=1
                 updateExerciseView()
                 updateButtonStates()
@@ -217,19 +211,19 @@ class FollowActivity : AppCompatActivity() {
 
         when (currentExerciseIndex) {
             0 -> {
-                progressBar.progress = FollowBox.left_repeats*10
+                progressBar.progress = ((FollowBox.left_repeats.toFloat()/ repeats)*100).toInt()
             }
             1 -> {
-                progressBar.progress =FollowBox.right_repeats*10
+                progressBar.progress =((FollowBox.right_repeats.toFloat()/ repeats)*100).toInt()
             }
             2 -> {
-                progressBar.progress =FollowBox.left_repeats_2*10
+                progressBar.progress =((FollowBox.left_repeats_2.toFloat()/ repeats)*100).toInt()
             }
             3 -> {
-                progressBar.progress =FollowBox.right_repeats_2*10
+                progressBar.progress =((FollowBox.right_repeats_2.toFloat()/ repeats)*100).toInt()
             }
             4 -> {
-                progressBar.progress =FollowBox.smile_repeats*10
+                progressBar.progress =((FollowBox.smile_repeats.toFloat()/ repeats)*100).toInt()
             }
         }
 
@@ -274,6 +268,7 @@ class FollowActivity : AppCompatActivity() {
         FollowBox.usrednianie_3 = 0
         FollowBox.usrednianie_4 = 0
         FollowBox.sumat = 0F
+        FollowBox.repeats = repeats
 
         val alertDialogBuilder = AlertDialog.Builder(this)
         alertDialogBuilder.setTitle("Zestaw treningowy ukończony")
@@ -296,6 +291,7 @@ class FollowActivity : AppCompatActivity() {
                 context.startActivity(it)
             }
         }
+        var repeats: Int = 0
     }
 }
 

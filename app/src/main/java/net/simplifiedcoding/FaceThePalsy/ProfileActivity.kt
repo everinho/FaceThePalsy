@@ -23,7 +23,7 @@ import java.io.FileReader
 class ProfileActivity : AppCompatActivity() {
 
     companion object {
-        var assymetry: Float = 0F
+        var asymmetry: Float = 0F
         var faceScanHistory: MutableList<FaceScan> = mutableListOf()
     }
 
@@ -86,14 +86,14 @@ class ProfileActivity : AppCompatActivity() {
 
         loadAsymmetryData()
 
-        if (assymetry == 0F) {
+        if (asymmetry == 0F) {
             asymetria.text = "Nie zmierzono asymetrii!!"
         } else {
-            asymetria.text = "Asymetria: $assymetry"
+            asymetria.text = "Asymetria: $asymmetry"
 
             // Dodaj nowy skan do historii
             val currentTimestamp = System.currentTimeMillis()
-            val newFaceScan = FaceScan(assymetry, currentTimestamp, getCurrentDate())
+            val newFaceScan = FaceScan(asymmetry, currentTimestamp, getCurrentDate())
             faceScanHistory.add(0, newFaceScan)
 
             // Powiadom adapter o aktualizacji danych

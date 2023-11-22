@@ -44,6 +44,7 @@ class FollowBox(
         var usrednianie_2: Int = 0
         var usrednianie_3: Int = 0
         var usrednianie_4: Int = 0
+        var repeats: Int = 0
     }
 
     private val paint = Paint().apply {
@@ -190,7 +191,7 @@ class FollowBox(
                     if (proportion > 1.1 * prog_1) {
                         if (!isExercising_left) {
                             isExercising_left = true
-                            if (left_repeats < 10) {
+                            if (left_repeats < repeats) {
                                 left_repeats += 1
                             }
                         }
@@ -198,7 +199,7 @@ class FollowBox(
                         isExercising_left = false
                     }
 
-                    if (left_repeats >= 10) {
+                    if (left_repeats >= repeats) {
                         canvas?.drawText("Ćwiczenie ukończone!", 50F, 650F, paint_text_success)
                     }
                 }
@@ -209,13 +210,13 @@ class FollowBox(
                 canvas?.drawText("Prog: ${prog_1?.toString() ?: "N/A"}", 50F, 350F, paint_text)
                 canvas?.drawText(leftDistanceText, 50F, 450F, paint_text)
 
-                if(left_repeats<10)
+                if(left_repeats<repeats)
                 {
                     if(!isExercising_left) canvas?.drawText("Unieś powiekę", 600F, 350F, paint_text)
                     else canvas?.drawText("Opuść powiekę", 600F, 350F, paint_text)
                 }
 
-                val repetitionsText = "Powtórzenia: $left_repeats / 10"
+                val repetitionsText = "Powtórzenia: $left_repeats / $repeats"
                 canvas?.drawText(repetitionsText, 50F, 550F, paint_text)
 
             }
@@ -243,7 +244,7 @@ class FollowBox(
                     if (proportion < 0.9*prog_3) {
                         if (!isExercising_left_2) {
                             isExercising_left_2 = true
-                            if (left_repeats_2 < 10) {
+                            if (left_repeats_2 < repeats) {
                                 left_repeats_2 += 1
                             }
                         }
@@ -251,7 +252,7 @@ class FollowBox(
                         isExercising_left_2 = false
                     }
 
-                    if (left_repeats_2 >= 10) {
+                    if (left_repeats_2 >= repeats) {
                         canvas?.drawText("Ćwiczenie ukończone!", 50F, 650F, paint_text_success)
                     }
                 }
@@ -262,13 +263,13 @@ class FollowBox(
                 canvas?.drawText(leftDistanceText, 50F, 350F, paint_text)
                 canvas?.drawText("Prog: ${prog_3?.toString() ?: "N/A"}", 50F, 450F, paint_text)
 
-                if(left_repeats_2<10)
+                if(left_repeats_2<repeats)
                 {
                     if(!isExercising_left_2) canvas?.drawText("Opuść powiekę", 600F, 350F, paint_text)
                     else canvas?.drawText("Unieś powiekę", 600F, 350F, paint_text)
                 }
 
-                val repetitionsText = "Powtórzenia: $left_repeats_2 / 10"
+                val repetitionsText = "Powtórzenia: $left_repeats_2 / $repeats"
                 canvas?.drawText(repetitionsText, 50F, 550F, paint_text)
             }
         }
@@ -353,14 +354,14 @@ class FollowBox(
                     if (proportion > 1.1*prog_2) {
                         if (!isExercising_right) {
                             isExercising_right = true
-                            if (right_repeats < 10) {
+                            if (right_repeats < repeats) {
                                 right_repeats += 1
                             }
                         }
                     } else if(proportion <= prog_2) {
                         isExercising_right = false
                     }
-                    if (right_repeats >= 10) {
+                    if (right_repeats >= repeats) {
                         canvas?.drawText("Ćwiczenie ukończone!", 50F, 650F, paint_text_success)
                     }
                 }
@@ -371,10 +372,10 @@ class FollowBox(
                 canvas?.drawText("Prog: ${prog_2?.toString() ?: "N/A"}", 50F, 350F, paint_text)
                 canvas?.drawText(rightDistanceText, 50F, 450F, paint_text)
 
-                val repetitionsText = "Powtórzenia: $right_repeats / 10"
+                val repetitionsText = "Powtórzenia: $right_repeats / $repeats"
                 canvas?.drawText(repetitionsText, 50F, 550F, paint_text)
 
-                if(right_repeats<10)
+                if(right_repeats<repeats)
                 {
                     if(!isExercising_right) canvas?.drawText("Unieś powiekę", 600F, 350F, paint_text)
                     else canvas?.drawText("Opuść powiekę", 600F, 350F, paint_text)
@@ -404,14 +405,14 @@ class FollowBox(
                     if (proportion <= 0.9*prog_4) {
                         if (!isExercising_right_2) {
                             isExercising_right_2 = true
-                            if (right_repeats_2 < 10) {
+                            if (right_repeats_2 < repeats) {
                                 right_repeats_2 += 1
                             }
                         }
                     } else if(proportion >= prog_4) {
                         isExercising_right_2 = false
                     }
-                    if (right_repeats_2 >= 10) {
+                    if (right_repeats_2 >= repeats) {
                         canvas?.drawText("Ćwiczenie ukończone!", 50F, 650F, paint_text_success)
                     }
                 }
@@ -422,13 +423,13 @@ class FollowBox(
                 canvas?.drawText("Prog: ${prog_4?.toString() ?: "N/A"}", 50F, 350F, paint_text)
                 canvas?.drawText(rightDistanceText, 50F, 450F, paint_text)
 
-                if(right_repeats_2<10)
+                if(right_repeats_2<repeats)
                 {
                     if(!isExercising_right_2) canvas?.drawText("Opuść powiekę", 600F, 350F, paint_text)
                     else canvas?.drawText("Unieś powiekę", 600F, 350F, paint_text)
                 }
 
-                val repetitionsText = "Powtórzenia: $right_repeats_2 / 10"
+                val repetitionsText = "Powtórzenia: $right_repeats_2 / $repeats"
                 canvas?.drawText(repetitionsText, 50F, 550F, paint_text)
 
             }
@@ -438,12 +439,12 @@ class FollowBox(
             val smilingProbability = face.smilingProbability
             //val smileText = "Smiling probability: $smilingProbability"
             //canvas?.drawText(smileText, 50F, 350F, paint_text)
-            val repetitionsText = "Powtórzenia: $smile_repeats / 10"
+            val repetitionsText = "Powtórzenia: $smile_repeats / $repeats"
 
             canvas?.drawText("Ćwiczenie 5 - Uśmiech", 50F, 250F, paint_text)
             canvas?.drawText(repetitionsText, 50F, 450F, paint_text)
 
-            if(smile_repeats<10)
+            if(smile_repeats<repeats)
             {
                 if(!isSmiling) canvas?.drawText("Uśmiechnij się", 50F, 350F, paint_text)
                 else canvas?.drawText("Neutralna mimika", 50F, 350F, paint_text)
@@ -453,7 +454,7 @@ class FollowBox(
                 if (smilingProbability > 0.9) {
                     if (!isSmiling) {
                         isSmiling = true
-                        if (smile_repeats < 10) {
+                        if (smile_repeats < repeats) {
                             smile_repeats += 1
                         }
                     }
@@ -462,7 +463,7 @@ class FollowBox(
                 }
             }
 
-            if (smile_repeats >= 10) {
+            if (smile_repeats >= repeats) {
                 canvas?.drawText("Ćwiczenie ukończone!", 50F, 550F, paint_text_success)
             }
         }

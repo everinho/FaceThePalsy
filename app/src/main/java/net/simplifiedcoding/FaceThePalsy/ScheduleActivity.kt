@@ -12,11 +12,10 @@ import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 
-
 class ScheduleActivity : AppCompatActivity() {
 
     companion object {
-        var assymetry: Float = 0F
+        var asymmetry: Float = 0F
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -30,13 +29,17 @@ class ScheduleActivity : AppCompatActivity() {
             finishAffinity()
         }
 
-        val asymetria: TextView = findViewById(R.id.asymetria)
-        if (assymetry == 0F) {
-            asymetria.text = "Nie zmierzono asymetrii!!"
-        } else {
-            asymetria.text = "Asymetria: $assymetry"
-        }
+        val asymmetryTextView: TextView = findViewById(R.id.asymetria)
 
+        if (asymmetry == 0F) {
+            asymmetryTextView.text = "Nie zmierzono asymetrii!!"
+        } else {
+            asymmetryTextView.text = "Asymetria: $asymmetry"
+            generateAndDisplayTrainingDays()
+        }
+    }
+
+    private fun generateAndDisplayTrainingDays() {
         val trainingDays = generateTrainingDays()
         val recyclerView: RecyclerView = findViewById(R.id.trainingDaysRecyclerView)
         recyclerView.layoutManager = LinearLayoutManager(this)
@@ -44,14 +47,24 @@ class ScheduleActivity : AppCompatActivity() {
     }
 
     private fun generateTrainingDays(): List<TrainingDay> {
+        if (asymmetry == 0F) {
+            // Asymetria nie została zmierzona, zwróć pustą listę dni treningowych
+            return emptyList()
+        }
+
         val trainingDays = mutableListOf<TrainingDay>()
         val currentDate = Calendar.getInstance()
         currentDate.time = Date()
 
         for (i in 0 until 7) { // Tworzymy harmonogram na 7 dni
             val date = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(currentDate.time)
-            val trainingCount = if (assymetry > 3) 3 else 2
-            trainingDays.add(TrainingDay(i + 1, date, trainingCount))
+            val trainingCount = when {
+                asymmetry < 2.2 -> 1
+                asymmetry in 2.2..2.95 -> 2
+                else -> 3
+            }
+            val isTrainingCompleted = List(trainingCount) { false }
+            trainingDays.add(TrainingDay(i + 1, date, trainingCount, isTrainingCompleted))
             currentDate.add(Calendar.DAY_OF_MONTH, 1)
         }
 
@@ -62,5 +75,6 @@ class ScheduleActivity : AppCompatActivity() {
 data class TrainingDay(
     val dayNumber: Int,
     val date: String,
-    val trainingCount: Int
+    val trainingCount: Int,
+    val isTrainingCompleted: List<Boolean> = List(trainingCount) { false }
 )

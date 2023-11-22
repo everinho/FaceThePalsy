@@ -16,6 +16,8 @@ import com.google.mlkit.vision.face.Face
 import com.google.mlkit.vision.face.FaceContour
 import net.simplifiedcoding.FaceThePalsy.ProfileActivity
 import net.simplifiedcoding.FaceThePalsy.ScheduleActivity
+import net.simplifiedcoding.FaceThePalsy.exercises.FollowActivity
+import net.simplifiedcoding.FaceThePalsy.exercises.FollowBox
 import java.io.BufferedWriter
 import java.io.File
 import java.io.FileWriter
@@ -324,8 +326,17 @@ class FaceBox(
                 }
                 canvas?.drawText(asymmetrical, textX, textY, paint_text.apply { color = textColor })
                 canvas?.drawText(asymmetryText, textX, textY + 80, paint_text.apply { color = textColor })
-                ScheduleActivity.assymetry = asymmetry
-                ProfileActivity.assymetry = asymmetry
+
+                ScheduleActivity.asymmetry = asymmetry
+                ProfileActivity.asymmetry = asymmetry
+                val repeats = when {
+                    asymmetry < 2.2 -> 8
+                    asymmetry in 2.2..2.95 -> 10
+                    else -> 12
+                }
+                FollowBox.repeats = repeats
+                FollowActivity.repeats = repeats
+
                 saveAsymmetryToJson(asymmetry)
 
             }
