@@ -35,43 +35,6 @@ class ProfileActivity : AppCompatActivity() {
     lateinit var progressBar: ProgressBar
     lateinit var trainingsTextView: TextView
 
-//    private fun loadAsymmetryData() {
-//        try {
-//            // Wczytaj dane z pliku
-//            val fileName = "asymmetry_data.json"
-//            val file = File(this.getExternalFilesDir(null), fileName)
-//            val fileReader = FileReader(file)
-//            val bufferedReader = BufferedReader(fileReader)
-//
-//            // Tworzenie obiektu JSON za pomocą Gson
-//            val gson = Gson()
-//
-//            // Sprawdzenie, czy to jest obiekt czy tablica
-//            val jsonElement = gson.fromJson(bufferedReader, JsonElement::class.java)
-//            if (jsonElement.isJsonArray) {
-//                // Parsowanie listy obiektów JSON
-//                val listType = object : TypeToken<List<FaceScan>>() {}.type
-//                val faceScanList: List<FaceScan> = gson.fromJson(jsonElement, listType)
-//
-//                // Iterowanie po elementach listy
-//                for (faceScan in faceScanList) {
-//                    Log.d(TAG, "Wczytano dane z pliku JSON: Asymetria=${faceScan.asymmetry}, Data=${faceScan.date}")
-//                }
-//            } else if (jsonElement.isJsonObject) {
-//                // Parsowanie pojedynczego obiektu JSON
-//                val faceScan = gson.fromJson(jsonElement, FaceScan::class.java)
-//                Log.d(TAG, "Wczytano dane z pliku JSON: Asymetria=${faceScan.asymmetry}, Data=${faceScan.date}")
-//            }
-//
-//            // Zamknij strumienie
-//            bufferedReader.close()
-//            fileReader.close()
-//
-//        } catch (e: Exception) {
-//            Log.e(TAG, "Błąd podczas wczytywania danych z pliku JSON", e)
-//        }
-//    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_profile)

@@ -3,6 +3,7 @@ package net.simplifiedcoding.FaceThePalsy.facedetector
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
+import android.hardware.Camera
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
@@ -90,6 +91,7 @@ class FaceDetectionActivity : AppCompatActivity() {
             FaceBox.calculated = false
             FaceBox.asymmetry = 0f
             isDialogShown = false
+            FaceBox.saved = false
         }
 
         cameraSelector = CameraSelector.Builder().requireLensFacing(CameraSelector.LENS_FACING_FRONT).build()
@@ -163,36 +165,6 @@ class FaceDetectionActivity : AppCompatActivity() {
     private fun bindInputAnalyser() {
         startFaceDetection()
     }
-
-//    private fun bindInputAnalyser() {
-//        val progressBar = findViewById<ProgressBar>(R.id.progress_bar)
-//        val detector = FaceDetection.getClient(
-//            FaceDetectorOptions.Builder()
-//                .setPerformanceMode(FaceDetectorOptions.PERFORMANCE_MODE_FAST)
-//                .setContourMode(FaceDetectorOptions.CONTOUR_MODE_ALL)
-//                .setClassificationMode(FaceDetectorOptions.CLASSIFICATION_MODE_NONE)
-//                .setLandmarkMode(FaceDetectorOptions.LANDMARK_MODE_ALL)
-//                .build()
-//        )
-//        imageAnalysis = ImageAnalysis.Builder()
-//            .setTargetRotation(binding.previewView.display.rotation)
-//            .build()
-//
-//        val cameraExecutor = Executors.newSingleThreadExecutor()
-//
-//        imageAnalysis.setAnalyzer(cameraExecutor) { imageProxy ->
-//            processImageProxy(detector, imageProxy, progressBar)
-//        }
-//
-//        try {
-//            processCameraProvider.bindToLifecycle(this, cameraSelector, imageAnalysis)
-//        } catch (illegalStateException: IllegalStateException) {
-//            Log.e(TAG, illegalStateException.message ?: "IllegalStateException")
-//        } catch (illegalArgumentException: IllegalArgumentException) {
-//            Log.e(TAG, illegalArgumentException.message ?: "IllegalArgumentException")
-//        }
-//
-//    }
 
     @SuppressLint("UnsafeOptInUsageError")
     private fun processImageProxy(detector: FaceDetector, imageProxy: ImageProxy, progressBar: ProgressBar) {
