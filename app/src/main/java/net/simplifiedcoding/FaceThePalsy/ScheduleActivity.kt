@@ -1,12 +1,17 @@
 package net.simplifiedcoding.FaceThePalsy
 
+import android.content.ContentValues
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
 import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.gson.Gson
+import com.google.gson.JsonArray
+import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
@@ -28,6 +33,7 @@ class ScheduleActivity : AppCompatActivity() {
             startActivity(intent)
             finishAffinity()
         }
+        asymmetry = loadAsymmetryFromJson()
 
         val asymmetryTextView: TextView = findViewById(R.id.asymetria)
 
@@ -69,6 +75,29 @@ class ScheduleActivity : AppCompatActivity() {
         }
 
         return trainingDays
+    }
+
+    private fun loadAsymmetryFromJson(): Float {
+        val fileName = "asymmetry_data.json"
+        val file = File(getExternalFilesDir(null), fileName)
+
+        if (file.exists()) {
+            try {
+                val gson = Gson()
+                val jsonString = file.readText()
+                val jsonArray = gson.fromJson(jsonString, JsonArray::class.java)
+
+                if (jsonArray.size() > 0) {
+                    // Pobierz asymetrię z pierwszego wpisu w pliku
+                    val firstEntry = jsonArray.first().asJsonObject
+                    return firstEntry.getAsJsonPrimitive("asymmetry").asFloat
+                }
+            } catch (e: Exception) {
+                Log.e(ContentValues.TAG, "Błąd podczas odczytu asymetrii z pliku JSON", e)
+            }
+        }
+
+        return 0F
     }
 }
 

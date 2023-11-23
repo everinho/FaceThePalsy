@@ -97,6 +97,7 @@ class ProfileActivity : AppCompatActivity() {
 
         trainingsTextView.text = "Postęp: $progress%"
     }
+    
     private fun loadAsymmetryFromJson(): Float {
         val fileName = "asymmetry_data.json"
         val file = File(getExternalFilesDir(null), fileName)
@@ -108,9 +109,9 @@ class ProfileActivity : AppCompatActivity() {
                 val jsonArray = gson.fromJson(jsonString, JsonArray::class.java)
 
                 if (jsonArray.size() > 0) {
-                    // Pobierz asymetrię z ostatniego wpisu w pliku
-                    val lastEntry = jsonArray.last().asJsonObject
-                    return lastEntry.getAsJsonPrimitive("asymmetry").asFloat
+                    // Pobierz asymetrię z pierwszego wpisu w pliku
+                    val firstEntry = jsonArray.first().asJsonObject
+                    return firstEntry.getAsJsonPrimitive("asymmetry").asFloat
                 }
             } catch (e: Exception) {
                 Log.e(TAG, "Błąd podczas odczytu asymetrii z pliku JSON", e)

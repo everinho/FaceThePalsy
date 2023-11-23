@@ -331,14 +331,14 @@ class FaceBox(
                 canvas?.drawText(asymmetrical, textX, textY, paint_text.apply { color = textColor })
                 canvas?.drawText(asymmetryText, textX, textY + 80, paint_text.apply { color = textColor })
 
-                ScheduleActivity.asymmetry = asymmetry
-                ProfileActivity.asymmetry = asymmetry
+//                ScheduleActivity.asymmetry = asymmetry
+//                ProfileActivity.asymmetry = asymmetry
 
-                val repeats = when {
-                    asymmetry < 2.2 -> 8
-                    asymmetry in 2.2..2.95 -> 10
-                    else -> 12
-                }
+//                val repeats = when {
+//                    asymmetry < 2.2 -> 8
+//                    asymmetry in 2.2..2.95 -> 10
+//                    else -> 12
+//                }
 
                 val trainingMessage = when {
                     asymmetry < 2.2 -> "Zalecany 1 trening dziennie"
@@ -352,8 +352,8 @@ class FaceBox(
                 canvas?.drawText(resetMessage, textX, textY + 980, paint_text2.apply { color = Color.BLACK })
                 canvas?.drawText(resetMessage2, textX, textY + 1030, paint_text2.apply { color = Color.BLACK })
 
-                FollowBox.repeats = repeats
-                FollowActivity.repeats = repeats
+//                FollowBox.repeats = repeats
+//                FollowActivity.repeats = repeats
 
                 if(!saved) {
                     saveAsymmetryToJson(asymmetry)

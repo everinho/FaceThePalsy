@@ -18,6 +18,7 @@ class FollowBox(
     private val face: Face,
     private val imageRect: Rect,
     private val id: Int,
+    private val repeats: Int
 ) : FaceBoxOverlay.FaceBox(overlay) {
 
     companion object {
@@ -44,7 +45,6 @@ class FollowBox(
         var usrednianie_2: Int = 0
         var usrednianie_3: Int = 0
         var usrednianie_4: Int = 0
-        var repeats: Int = 0
     }
 
     private val paint = Paint().apply {
@@ -487,4 +487,5 @@ class FollowBox(
     private fun calculateDistancesimple(x1: Float, y1: Float, x2: Float, y2: Float): Float {
         return sqrt((x2 - x1).pow(2) + (y2 - y1).pow(2))
     }
+
 }

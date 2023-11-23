@@ -5,7 +5,6 @@ import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.provider.ContactsContract.Profile
 import android.util.Log
 import android.widget.Button
 import android.widget.ProgressBar
@@ -17,6 +16,8 @@ import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageProxy
 import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
+import com.google.gson.Gson
+import com.google.gson.JsonArray
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.face.FaceDetection
 import com.google.mlkit.vision.face.FaceDetector
@@ -26,8 +27,8 @@ import net.simplifiedcoding.FaceThePalsy.MainActivity
 import net.simplifiedcoding.FaceThePalsy.ProfileActivity
 import net.simplifiedcoding.FaceThePalsy.R
 import net.simplifiedcoding.FaceThePalsy.databinding.ActivityFollowBinding
-import net.simplifiedcoding.FaceThePalsy.facedetector.FaceBox
-import pl.droidsonroids.gif.GifImageView
+import net.simplifiedcoding.FaceThePalsy.facedetector.FaceDetectionActivity
+import java.io.File
 import java.util.concurrent.Executors
 
 class FollowActivity : AppCompatActivity() {
@@ -73,6 +74,12 @@ class FollowActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         currentExerciseIndex = intent.getIntExtra("currentExerciseIndex", 0)
+
+        asymmetry = loadAsymmetryFromJson()
+
+        if (asymmetry == 0F) {
+            showFaceScanDialog()
+        }
 
         val nextButton = findViewById<Button>(R.id.nextButton)
         val backButton = findViewById<Button>(R.id.backButton)
@@ -133,7 +140,7 @@ class FollowActivity : AppCompatActivity() {
                     if(FollowBox.smile_repeats>=repeats) success=true
                 }
             }
-            if (currentExerciseIndex < exercises.size - 1 && !success) {
+            if (currentExerciseIndex < exercises.size - 1 && success) {
                 currentExerciseIndex+=1
                 updateExerciseView()
                 updateButtonStates()
@@ -203,7 +210,7 @@ class FollowActivity : AppCompatActivity() {
         detector.process(inputImage).addOnSuccessListener { faces ->
             binding.graphicOverlay.clear()
             faces.forEach { face ->
-                val faceBox = FollowBox(binding.graphicOverlay, face, imageProxy.image!!.cropRect, currentExerciseIndex)
+                val faceBox = FollowBox(binding.graphicOverlay, face, imageProxy.image!!.cropRect, currentExerciseIndex, repeats)
                 binding.graphicOverlay.add(faceBox)
             }
         }.addOnFailureListener {
@@ -271,7 +278,6 @@ class FollowActivity : AppCompatActivity() {
         FollowBox.usrednianie_3 = 0
         FollowBox.usrednianie_4 = 0
         FollowBox.sumat = 0F
-        FollowBox.repeats = repeats
 
         val alertDialogBuilder = AlertDialog.Builder(this)
         alertDialogBuilder.setTitle("Zestaw treningowy ukończony")
@@ -287,6 +293,49 @@ class FollowActivity : AppCompatActivity() {
         alertDialog.show()
     }
 
+    private fun loadAsymmetryFromJson(): Float {
+        val fileName = "asymmetry_data.json"
+        val file = File(getExternalFilesDir(null), fileName)
+
+        if (file.exists()) {
+            try {
+                val gson = Gson()
+                val jsonString = file.readText()
+                val jsonArray = gson.fromJson(jsonString, JsonArray::class.java)
+
+                if (jsonArray.size() > 0) {
+                    val firstEntry = jsonArray.first().asJsonObject
+                    asymmetry = firstEntry.getAsJsonPrimitive("asymmetry").asFloat
+                    repeats = when {
+                        asymmetry < 2.2 -> 8
+                        asymmetry in 2.2..2.95 -> 10
+                        else -> 12
+                    }
+                    return asymmetry
+                }
+            } catch (e: Exception) {
+                Log.e(ContentValues.TAG, "Błąd podczas odczytu asymetrii z pliku JSON", e)
+            }
+        }
+        return 0F
+    }
+
+    private fun showFaceScanDialog() {
+        val alertDialogBuilder = AlertDialog.Builder(this)
+        alertDialogBuilder.setTitle("Konieczne jest wykonanie skanu twarzy")
+        alertDialogBuilder.setMessage("Aby rozpocząć trening, musisz wykonać skan twarzy i dobrać odpowiedni trening.")
+        alertDialogBuilder.setPositiveButton("OK") { dialog, _ ->
+            dialog.dismiss()
+            // Tutaj możesz uruchomić aktywność do skanowania twarzy lub inny odpowiedni ekran
+            val intent = Intent(this, FaceDetectionActivity::class.java)
+            startActivity(intent)
+            finish()
+        }
+
+        val alertDialog = alertDialogBuilder.create()
+        alertDialog.show()
+    }
+
     companion object {
         private val TAG = FollowActivity::class.simpleName
         fun startActivity(context: Context) {
@@ -295,6 +344,7 @@ class FollowActivity : AppCompatActivity() {
             }
         }
         var repeats: Int = 0
+        var asymmetry: Float = 0f
     }
 }
 
