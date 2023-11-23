@@ -1,5 +1,7 @@
 package net.simplifiedcoding.FaceThePalsy
 
+import android.content.ContentValues.TAG
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -26,11 +28,20 @@ class FaceScanHistoryAdapter(private val faceScans: List<FaceScan>) :
         val faceScan = faceScans[position]
 
         // Formatuj datę
-        val dateFormat = SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.getDefault())
-        val formattedDate = dateFormat.format(Date(faceScan.timestamp))
+        val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
 
-        holder.asymmetryTextView.text = "Asymetria: ${faceScan.asymmetry}"
-        holder.timestampTextView.text = "Data: $formattedDate"
+        try {
+            // Parsuj datę z formatu string do obiektu Date
+            val date = dateFormat.parse(faceScan.date)
+
+            // Formatuj datę na nowo, jeśli konwersja się powiedzie
+            val formattedDate = SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.getDefault()).format(date)
+
+            holder.asymmetryTextView.text = "Asymetria: ${faceScan.asymmetry}"
+            holder.timestampTextView.text = "Data: $formattedDate"
+        } catch (e: Exception) {
+            Log.e(TAG, "Błąd podczas parsowania daty", e)
+        }
     }
 
     override fun getItemCount(): Int {

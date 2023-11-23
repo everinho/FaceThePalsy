@@ -11,11 +11,13 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.gson.Gson
+import com.google.gson.JsonArray
 import com.google.gson.JsonElement
 import com.google.gson.reflect.TypeToken
 import java.io.BufferedReader
 import java.io.File
 import java.io.FileReader
+import java.io.FileWriter
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -48,20 +50,18 @@ class ProfileActivity : AppCompatActivity() {
 
         asymetria = findViewById(R.id.asymetria)
         faceScanHistoryRecyclerView = findViewById(R.id.faceScanHistoryRecyclerView)
-        faceScanHistoryAdapter = FaceScanHistoryAdapter(faceScanHistory)
+        faceScanHistoryAdapter = FaceScanHistoryAdapter(loadFaceScanHistoryFromJson())
+
+        asymmetry = loadAsymmetryFromJson()
 
         if (asymmetry == 0F) {
             asymetria.text = "Nie zmierzono asymetrii!!"
         } else {
             asymetria.text = "Asymetria: $asymmetry"
-
-            // Dodaj nowy skan do historii
-            val currentTimestamp = System.currentTimeMillis()
-            val newFaceScan = FaceScan(asymmetry, currentTimestamp, getCurrentDate())
-            faceScanHistory.add(0, newFaceScan)
-
-            // Powiadom adapter o aktualizacji danych
-            faceScanHistoryAdapter.notifyDataSetChanged()
+            val newFaceScan = FaceScan(asymmetry, getCurrentDate())
+            if (!faceScanHistory.contains(newFaceScan)) {
+                faceScanHistory.add(newFaceScan)
+            }
         }
 
         faceScanHistoryRecyclerView.layoutManager = LinearLayoutManager(this)
@@ -76,6 +76,7 @@ class ProfileActivity : AppCompatActivity() {
         val currentDate = Date()
         return dateFormat.format(currentDate)
     }
+
     private fun updateTrainings() {
         if (asymmetry < 2.2) {
             totalTrainings = 7
@@ -96,10 +97,60 @@ class ProfileActivity : AppCompatActivity() {
 
         trainingsTextView.text = "Postęp: $progress%"
     }
+    private fun loadAsymmetryFromJson(): Float {
+        val fileName = "asymmetry_data.json"
+        val file = File(getExternalFilesDir(null), fileName)
+
+        if (file.exists()) {
+            try {
+                val gson = Gson()
+                val jsonString = file.readText()
+                val jsonArray = gson.fromJson(jsonString, JsonArray::class.java)
+
+                if (jsonArray.size() > 0) {
+                    // Pobierz asymetrię z ostatniego wpisu w pliku
+                    val lastEntry = jsonArray.last().asJsonObject
+                    return lastEntry.getAsJsonPrimitive("asymmetry").asFloat
+                }
+            } catch (e: Exception) {
+                Log.e(TAG, "Błąd podczas odczytu asymetrii z pliku JSON", e)
+            }
+        }
+
+        return 0F
+    }
+
+    private fun loadFaceScanHistoryFromJson(): List<FaceScan> {
+        val fileName = "asymmetry_data.json"
+        val file = File(getExternalFilesDir(null), fileName)
+
+        if (file.exists()) {
+            try {
+                val gson = Gson()
+                val jsonString = file.readText()
+                val jsonArray = gson.fromJson(jsonString, JsonArray::class.java)
+
+                if (jsonArray.size() > 0) {
+                    val faceScanList = mutableListOf<FaceScan>()
+                    for (jsonElement in jsonArray) {
+                        val jsonObject = jsonElement.asJsonObject
+                        val asymmetry = jsonObject.getAsJsonPrimitive("asymmetry").asFloat
+                        val date = jsonObject.getAsJsonPrimitive("date").asString
+                        faceScanList.add(FaceScan(asymmetry, date))
+                    }
+                    return faceScanList
+                }
+            } catch (e: Exception) {
+                Log.e(TAG, "Błąd podczas odczytu historii skanów z pliku JSON", e)
+            }
+        }
+
+        return emptyList()
+    }
 }
 
 data class FaceScan(
     val asymmetry: Float,
-    val timestamp: Long,
     val date: String
 )
+
