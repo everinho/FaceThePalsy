@@ -66,16 +66,8 @@ class FollowBox(
         setShadowLayer(5f, 5f, 5f, Color.DKGRAY)
         typeface = Typeface.create(Typeface.DEFAULT, Typeface.BOLD)
     }
-    private val paint_punkt = Paint().apply {
-        color = Color.RED
-        style = Paint.Style.FILL
-        strokeWidth = 10.0f
-    }
 
     override fun draw(canvas: Canvas?) {
-//        val faceContours = face.getContour(FaceContour.FACE)?.points
-//        val point1 = faceContours?.getOrNull(18)
-//        val point2 = faceContours?.getOrNull(35)
 
         val leftEye = face.getContour(FaceContour.LEFT_EYE)?.points
         val rightEye = face.getContour(FaceContour.RIGHT_EYE)?.points

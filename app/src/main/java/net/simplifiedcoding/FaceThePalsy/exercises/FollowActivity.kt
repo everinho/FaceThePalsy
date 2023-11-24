@@ -32,6 +32,9 @@ import net.simplifiedcoding.FaceThePalsy.databinding.ActivityFollowBinding
 import net.simplifiedcoding.FaceThePalsy.facedetector.FaceDetectionActivity
 import java.io.File
 import java.io.FileWriter
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 import java.util.concurrent.Executors
 
 class FollowActivity : AppCompatActivity() {
@@ -70,6 +73,9 @@ class FollowActivity : AppCompatActivity() {
 
     private var currentExerciseIndex = 0
     private var success = false
+    private var startTime: Long = 0
+    private var endTime: Long = 0
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -91,6 +97,8 @@ class FollowActivity : AppCompatActivity() {
             startActivity(intent)
             finishAffinity()
         }
+
+        startTime = System.currentTimeMillis()
 
         val resetButton = findViewById<Button>(R.id.reset)
         resetButton.setOnClickListener {
@@ -143,7 +151,7 @@ class FollowActivity : AppCompatActivity() {
                     if(FollowBox.smile_repeats>=repeats) success=true
                 }
             }
-            if (currentExerciseIndex < exercises.size - 1 && !success) {
+            if (currentExerciseIndex < exercises.size - 1 && success) {
                 currentExerciseIndex+=1
                 updateExerciseView()
                 updateButtonStates()
@@ -258,6 +266,10 @@ class FollowActivity : AppCompatActivity() {
     }
 
     private fun showTrainingCompletedDialog() {
+        endTime = System.currentTimeMillis()
+        val trainingTimeInMillis = endTime - startTime
+        saveTrainingResultToJson(trainingTimeInMillis)
+
         FollowBox.smile_repeats = 0
         FollowBox.isSmiling = false
         FollowBox.left_repeats = 0
@@ -322,6 +334,72 @@ class FollowActivity : AppCompatActivity() {
         }
         return 0F
     }
+
+    private fun saveTrainingResultToJson(trainingTimeInMillis: Long) {
+        try {
+            val gson = Gson()
+
+            // Pobierz aktualną zawartość pliku training_data.json
+            val trainingDataFileName = "training_data.json"
+            val trainingDataFile = File(getExternalFilesDir(null), trainingDataFileName)
+            val trainingDataJsonString = if (trainingDataFile.exists()) {
+                trainingDataFile.readText()
+            } else {
+                "[]"
+            }
+
+            // Parsuj zawartość jako JsonArray
+            val trainingDataJsonArray = try {
+                gson.fromJson(trainingDataJsonString, JsonArray::class.java)
+            } catch (e: JsonSyntaxException) {
+                // Jeżeli parsowanie zawiedzie, utwórz nową pustą tablicę
+                JsonArray()
+            }
+
+            // Pobierz liczbę completed_trainings z ostatniego wpisu lub ustaw na 0
+            val lastTrainingNumber = trainingDataJsonArray.lastOrNull()?.asJsonObject?.getAsJsonPrimitive("completed_trainings")?.asInt ?: 0
+
+            // Dodaj informacje o treningu do pliku training_result.json
+            val trainingResultFileName = "training_result.json"
+            val trainingResultFile = File(getExternalFilesDir(null), trainingResultFileName)
+            val trainingResultJsonString = if (trainingResultFile.exists()) {
+                trainingResultFile.readText()
+            } else {
+                "[]"
+            }
+
+            // Parsuj zawartość jako JsonArray
+            val trainingResultJsonArray = try {
+                gson.fromJson(trainingResultJsonString, JsonArray::class.java)
+            } catch (e: JsonSyntaxException) {
+                // Jeżeli parsowanie zawiedzie, utwórz nową pustą tablicę
+                JsonArray()
+            }
+
+            // Dodaj informacje o treningu do istniejącego wpisu lub utwórz nowy
+            val trainingResultEntry = JsonObject().apply {
+                addProperty("training_number", lastTrainingNumber + 1) // Numer treningu
+                addProperty("training_date", SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(Date())) // Data treningu
+                addProperty("training_time", trainingTimeInMillis) // Czas trwania treningu w milisekundach
+            }
+
+            trainingResultJsonArray.add(trainingResultEntry)
+
+            // Konwertuj z powrotem do formatu JSON
+            val updatedTrainingResultJsonString = gson.toJson(trainingResultJsonArray)
+
+            // Zapisz zaktualizowany JSON do pliku training_result.json
+            val trainingResultFileWriter = FileWriter(trainingResultFile, false)
+            trainingResultFileWriter.use {
+                it.write(updatedTrainingResultJsonString)
+            }
+
+            Log.d(TAG, "Training result saved in JSON file: $updatedTrainingResultJsonString")
+        } catch (e: Exception) {
+            Log.e(TAG, "Error saving training result in JSON file", e)
+        }
+    }
+
 
     private fun showFaceScanDialog() {
         val alertDialogBuilder = AlertDialog.Builder(this)
