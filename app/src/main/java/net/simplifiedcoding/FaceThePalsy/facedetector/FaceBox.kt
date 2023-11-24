@@ -71,6 +71,7 @@ class FaceBox(
         var calculated: Boolean = false
         var asymmetry = 0f
         var saved: Boolean = false
+        var saved_training: Boolean = false
     }
 
     private val paint_text = Paint().apply {
@@ -360,6 +361,11 @@ class FaceBox(
                     saved = true
                 }
 
+                if(!saved_training) {
+                    saveTrainingDataToJson(asymmetry)
+                    saved_training = true
+                }
+
             }
         }
     }
@@ -453,6 +459,126 @@ class FaceBox(
 
     private fun calculateDistancesimple(x1: Float, y1: Float, x2: Float, y2: Float): Float {
         return sqrt((x2 - x1).pow(2) + (y2 - y1).pow(2))
+    }
+
+//    private fun saveTrainingDataToJson(asymmetry: Float) {
+//        try {
+//            // Create Gson object
+//            val gson = Gson()
+//
+//            // Create JSON object with new data
+//            val jsonObject = JsonObject()
+//            jsonObject.addProperty("asymmetry", asymmetry)
+//            jsonObject.addProperty("date", getCurrentDate())
+//            jsonObject.addProperty("total_training", getTotalTraining(asymmetry))
+//            jsonObject.addProperty("daily_training", getDailyTraining(asymmetry))
+//            jsonObject.addProperty("repetitions", getRepetitions(asymmetry))
+//            jsonObject.addProperty("completed_trainings", 0)
+//
+//            // Check if the file already exists
+//            val fileName = "training_data.json"
+//            val file = File(context.getExternalFilesDir(null), fileName)
+//
+//            val jsonArray: JsonArray = if (file.exists()) {
+//                // If the file exists, read existing data
+//                val existingJson = file.readText()
+//                try {
+//                    // Try to parse existing JSON as JsonArray
+//                    gson.fromJson(existingJson, JsonArray::class.java)
+//                } catch (e: JsonSyntaxException) {
+//                    // If parsing fails, handle it as a single JSON object
+//                    Log.e(TAG, "Error parsing JSON as JsonArray", e)
+//                    return
+//                }
+//            } else {
+//                // If the file doesn't exist, create a new array
+//                JsonArray()
+//            }
+//
+//            // Add the object to the array
+//            jsonArray.add(jsonObject)
+//
+//            // Convert to JSON format
+//            val jsonString = gson.toJson(jsonArray)
+//
+//            // Write to the file
+//            val fileWriter = FileWriter(file, false)
+//            fileWriter.use {
+//                it.write(jsonString)
+//            }
+//
+//            Log.d(TAG, "Data appended to JSON file: $jsonString")
+//        } catch (e: Exception) {
+//            Log.e(TAG, "Error saving data to JSON file", e)
+//        }
+//    }
+
+    private fun saveTrainingDataToJson(asymmetry: Float) {
+        try {
+            // Create Gson object
+            val gson = Gson()
+
+            // Check if the file already exists
+            val fileName = "training_data.json"
+            val file = File(context.getExternalFilesDir(null), fileName)
+
+            if (!file.exists()) {
+                // If the file doesn't exist, create a new array
+                val jsonArray = JsonArray()
+
+                // Create JSON object with new data
+                val jsonObject = JsonObject()
+                jsonObject.addProperty("asymmetry", asymmetry)
+                jsonObject.addProperty("date", getCurrentDate())
+                jsonObject.addProperty("total_training", getTotalTraining(asymmetry))
+                jsonObject.addProperty("daily_training", getDailyTraining(asymmetry))
+                jsonObject.addProperty("repetitions", getRepetitions(asymmetry))
+                jsonObject.addProperty("completed_trainings", 0)
+
+                // Add the object to the array
+                jsonArray.add(jsonObject)
+
+                // Convert to JSON format
+                val jsonString = gson.toJson(jsonArray)
+
+                // Write to the file
+                val fileWriter = FileWriter(file, false)
+                fileWriter.use {
+                    it.write(jsonString)
+                }
+
+                Log.d(TAG, "Data appended to JSON file: $jsonString")
+            } else {
+                Log.d(TAG, "File training_data.json already exists. Data not appended.")
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "Error saving data to JSON file", e)
+        }
+    }
+
+
+    private fun getTotalTraining(asymmetry: Float): Int {
+        return when {
+            asymmetry < 2.2 -> 7
+            asymmetry in 2.2..2.95 -> 14
+            else -> 21
+        }
+    }
+
+    private fun getDailyTraining(asymmetry: Float): Int {
+        return when {
+            asymmetry < 2.2 -> 1
+            asymmetry in 2.2..2.95 -> 2
+            else -> 3
+        }
+    }
+
+    private fun getRepetitions(asymmetry: Float): Int {
+        return when {
+            asymmetry < 2.2 -> 8
+            asymmetry in 2.2..2.95 -> 10
+            else -> 12
+        }
     }
 
     private fun distance(point1: PointF?, point2: PointF?): Float {

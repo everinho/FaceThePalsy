@@ -12,7 +12,6 @@ class TrainingDayAdapter(private val trainingDays: List<TrainingDay>) :
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val dayNumberTextView: TextView = itemView.findViewById(R.id.dayNumberTextView)
-        val dateTextView: TextView = itemView.findViewById(R.id.dateTextView)
         val trainingIcon1: ImageView = itemView.findViewById(R.id.trainingIcon1)
         val trainingIcon2: ImageView = itemView.findViewById(R.id.trainingIcon2)
         val trainingIcon3: ImageView = itemView.findViewById(R.id.trainingIcon3)
@@ -28,7 +27,6 @@ class TrainingDayAdapter(private val trainingDays: List<TrainingDay>) :
         val trainingDay = trainingDays[position]
 
         holder.dayNumberTextView.text = "Dzień ${trainingDay.dayNumber}"
-        holder.dateTextView.text = "Data: ${trainingDay.date}"
 
         val trainingIcons = listOf(
             holder.trainingIcon1,
@@ -39,7 +37,7 @@ class TrainingDayAdapter(private val trainingDays: List<TrainingDay>) :
         for (i in 0 until 3) { // Maksymalna ilość treningów na dzień
             val icon = trainingIcons[i]
             if (i < trainingDay.trainingCount) {
-                if (trainingDay.isTrainingCompleted[i]) {
+                if (i < trainingDay.completedTrainings) {
                     icon.setImageResource(R.drawable.checkmark) // Ustaw ikonę ptaszka, gdy trening został wykonany
                 } else {
                     icon.setImageResource(R.drawable.checkbox) // Ustaw pusty kwadrat, gdy trening nie został wykonany
@@ -49,8 +47,6 @@ class TrainingDayAdapter(private val trainingDays: List<TrainingDay>) :
             }
         }
     }
-
-
 
     override fun getItemCount(): Int {
         return trainingDays.size

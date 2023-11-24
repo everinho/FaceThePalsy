@@ -18,6 +18,8 @@ import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import com.google.gson.Gson
 import com.google.gson.JsonArray
+import com.google.gson.JsonObject
+import com.google.gson.JsonSyntaxException
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.face.FaceDetection
 import com.google.mlkit.vision.face.FaceDetector
@@ -29,6 +31,7 @@ import net.simplifiedcoding.FaceThePalsy.R
 import net.simplifiedcoding.FaceThePalsy.databinding.ActivityFollowBinding
 import net.simplifiedcoding.FaceThePalsy.facedetector.FaceDetectionActivity
 import java.io.File
+import java.io.FileWriter
 import java.util.concurrent.Executors
 
 class FollowActivity : AppCompatActivity() {
@@ -140,13 +143,13 @@ class FollowActivity : AppCompatActivity() {
                     if(FollowBox.smile_repeats>=repeats) success=true
                 }
             }
-            if (currentExerciseIndex < exercises.size - 1 && success) {
+            if (currentExerciseIndex < exercises.size - 1 && !success) {
                 currentExerciseIndex+=1
                 updateExerciseView()
                 updateButtonStates()
             } else if(currentExerciseIndex == exercises.size -1 && success){
                 showTrainingCompletedDialog()
-                ProfileActivity.completedTrainings += 1
+                updateCompletedTrainingsInJson()
             }
         }
 
@@ -335,6 +338,60 @@ class FollowActivity : AppCompatActivity() {
         val alertDialog = alertDialogBuilder.create()
         alertDialog.show()
     }
+
+    private fun updateCompletedTrainingsInJson() {
+        try {
+            val gson = Gson()
+
+            // Pobierz aktualną zawartość pliku
+            val fileName = "training_data.json"
+            val file = File(getExternalFilesDir(null), fileName)
+            val jsonString = if (file.exists()) {
+                file.readText()
+            } else {
+                "[]"
+            }
+
+            // Parsuj zawartość jako JsonArray
+            val jsonArray = try {
+                gson.fromJson(jsonString, JsonArray::class.java)
+            } catch (e: JsonSyntaxException) {
+                // Jeżeli parsowanie zawiedzie, utwórz nową pustą tablicę
+                JsonArray()
+            }
+
+            // Sprawdź, czy istnieje już wpis z completed_trainings
+            val existingEntry = jsonArray.find {
+                it.isJsonObject && it.asJsonObject.has("completed_trainings")
+            }
+
+            if (existingEntry != null) {
+                // Znaleziono istniejący wpis, zaktualizuj jego wartość
+                val completedTrainings = existingEntry.asJsonObject.getAsJsonPrimitive("completed_trainings").asInt
+                existingEntry.asJsonObject.addProperty("completed_trainings", completedTrainings + 1)
+            } else {
+                // Nie znaleziono istniejącego wpisu, dodaj nowy
+                val newEntry = JsonObject().apply {
+                    addProperty("completed_trainings", 1)
+                }
+                jsonArray.add(newEntry)
+            }
+
+            // Konwertuj z powrotem do formatu JSON
+            val updatedJsonString = gson.toJson(jsonArray)
+
+            // Zapisz zaktualizowany JSON do pliku
+            val fileWriter = FileWriter(file, false)
+            fileWriter.use {
+                it.write(updatedJsonString)
+            }
+
+            Log.d(TAG, "Completed trainings updated in JSON file: $updatedJsonString")
+        } catch (e: Exception) {
+            Log.e(TAG, "Error updating completed trainings in JSON file", e)
+        }
+    }
+
 
     companion object {
         private val TAG = FollowActivity::class.simpleName

@@ -53,6 +53,7 @@ class ProfileActivity : AppCompatActivity() {
         faceScanHistoryAdapter = FaceScanHistoryAdapter(loadFaceScanHistoryFromJson())
 
         asymmetry = loadAsymmetryFromJson()
+        loadTrainingDataFromJson()
 
         if (asymmetry == 0F) {
             asymetria.text = "Nie zmierzono asymetrii!!"
@@ -67,7 +68,6 @@ class ProfileActivity : AppCompatActivity() {
         faceScanHistoryRecyclerView.layoutManager = LinearLayoutManager(this)
         faceScanHistoryRecyclerView.adapter = faceScanHistoryAdapter
 
-        updateTrainings()
         updateProgressBar()
     }
 
@@ -77,21 +77,12 @@ class ProfileActivity : AppCompatActivity() {
         return dateFormat.format(currentDate)
     }
 
-    private fun updateTrainings() {
-        if (asymmetry < 2.2) {
-            totalTrainings = 7
-        } else if (asymmetry in 2.2..2.95) {
-            totalTrainings = 14
-        } else {
-            totalTrainings = 21
-        }
-    }
-
     private fun updateProgressBar() {
         progressBar = findViewById(R.id.progress_bar)
         trainingsTextView = findViewById(R.id.trainingsTextView)
 
         val progress = (completedTrainings.toDouble() / totalTrainings.toDouble() * 100).toInt()
+        //val progress = (7.toDouble() / totalTrainings.toDouble() * 100).toInt()
 
         progressBar.progress = progress
 
@@ -147,6 +138,28 @@ class ProfileActivity : AppCompatActivity() {
         }
 
         return emptyList()
+    }
+
+    private fun loadTrainingDataFromJson() {
+        val fileName = "training_data.json"
+        val file = File(getExternalFilesDir(null), fileName)
+
+        if (file.exists()) {
+            try {
+                val gson = Gson()
+                val jsonString = file.readText()
+                val jsonArray = gson.fromJson(jsonString, JsonArray::class.java)
+
+                if (jsonArray.size() > 0) {
+                    // Pobierz wartości total_training i completed_trainings z ostatniego wpisu w pliku
+                    val lastEntry = jsonArray.last().asJsonObject
+                    totalTrainings = lastEntry.getAsJsonPrimitive("total_training").asInt
+                    completedTrainings = lastEntry.getAsJsonPrimitive("completed_trainings").asInt
+                }
+            } catch (e: Exception) {
+                Log.e(TAG, "Błąd podczas odczytu danych treningowych z pliku JSON", e)
+            }
+        }
     }
 }
 

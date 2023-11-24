@@ -46,32 +46,43 @@ class ScheduleActivity : AppCompatActivity() {
     }
 
     private fun generateAndDisplayTrainingDays() {
-        val trainingDays = generateTrainingDays()
+        val trainingDays = loadTrainingDaysFromJson()
         val recyclerView: RecyclerView = findViewById(R.id.trainingDaysRecyclerView)
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.adapter = TrainingDayAdapter(trainingDays)
     }
 
-    private fun generateTrainingDays(): List<TrainingDay> {
+    private fun loadTrainingDaysFromJson(): List<TrainingDay> {
         if (asymmetry == 0F) {
-            // Asymetria nie została zmierzona, zwróć pustą listę dni treningowych
             return emptyList()
         }
 
         val trainingDays = mutableListOf<TrainingDay>()
-        val currentDate = Calendar.getInstance()
-        currentDate.time = Date()
 
-        for (i in 0 until 7) { // Tworzymy harmonogram na 7 dni
-            val date = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(currentDate.time)
-            val trainingCount = when {
-                asymmetry < 2.2 -> 1
-                asymmetry in 2.2..2.95 -> 2
-                else -> 3
+        try {
+            val fileName = "training_data.json"
+            val file = File(getExternalFilesDir(null), fileName)
+
+            if (file.exists()) {
+                val gson = Gson()
+                val jsonString = file.readText()
+                val jsonArray = gson.fromJson(jsonString, JsonArray::class.java)
+
+                val totalTrainings = jsonArray.map { it.asJsonObject.getAsJsonPrimitive("total_training").asInt }.maxOrNull() ?: 7
+                val jsonObject = jsonArray.firstOrNull()?.asJsonObject
+
+                var completedTrainings = jsonObject?.getAsJsonPrimitive("completed_trainings")?.asInt ?: 0
+                var trainingCount = jsonObject?.getAsJsonPrimitive("daily_training")?.asInt ?: 1
+
+                for (i in 1..7) {
+
+                    var isTrainingCompleted = (0 until trainingCount).map { it < completedTrainings }
+                    trainingDays.add(TrainingDay(i, trainingCount, completedTrainings, isTrainingCompleted))
+                    completedTrainings -= trainingCount
+                }
             }
-            val isTrainingCompleted = List(trainingCount) { false }
-            trainingDays.add(TrainingDay(i + 1, date, trainingCount, isTrainingCompleted))
-            currentDate.add(Calendar.DAY_OF_MONTH, 1)
+        } catch (e: Exception) {
+            Log.e(ContentValues.TAG, "Błąd podczas odczytu danych treningowych z pliku JSON", e)
         }
 
         return trainingDays
@@ -103,7 +114,7 @@ class ScheduleActivity : AppCompatActivity() {
 
 data class TrainingDay(
     val dayNumber: Int,
-    val date: String,
     val trainingCount: Int,
+    val completedTrainings: Int,
     val isTrainingCompleted: List<Boolean> = List(trainingCount) { false }
 )
