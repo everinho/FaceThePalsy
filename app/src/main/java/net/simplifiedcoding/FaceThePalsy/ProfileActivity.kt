@@ -31,11 +31,13 @@ class ProfileActivity : AppCompatActivity() {
         var completedTrainings: Int = 0
     }
 
-    lateinit var asymetria: TextView
-    lateinit var faceScanHistoryRecyclerView: RecyclerView
-    lateinit var faceScanHistoryAdapter: FaceScanHistoryAdapter
-    lateinit var progressBar: ProgressBar
-    lateinit var trainingsTextView: TextView
+    private lateinit var asymetria: TextView
+    private lateinit var faceScanHistoryRecyclerView: RecyclerView
+    private lateinit var faceScanHistoryAdapter: FaceScanHistoryAdapter
+    private lateinit var progressBar: ProgressBar
+    private lateinit var trainingsTextView: TextView
+    private lateinit var trainingResultRecyclerView: RecyclerView
+    private lateinit var trainingResultAdapter: TrainingResultAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,6 +57,11 @@ class ProfileActivity : AppCompatActivity() {
         asymmetry = loadAsymmetryFromJson()
         loadTrainingDataFromJson()
 
+        trainingResultRecyclerView = findViewById(R.id.trainingResultRecyclerView)
+        trainingResultAdapter = TrainingResultAdapter(loadTrainingResultsFromJson())
+        trainingResultRecyclerView.layoutManager = LinearLayoutManager(this)
+        trainingResultRecyclerView.adapter = trainingResultAdapter
+
         if (asymmetry == 0F) {
             asymetria.text = "Nie zmierzono asymetrii!!"
         } else {
@@ -69,6 +76,35 @@ class ProfileActivity : AppCompatActivity() {
         faceScanHistoryRecyclerView.adapter = faceScanHistoryAdapter
 
         updateProgressBar()
+    }
+
+    private fun loadTrainingResultsFromJson(): List<TrainingResult> {
+        val fileName = "training_result.json"
+        val file = File(getExternalFilesDir(null), fileName)
+
+        if (file.exists()) {
+            try {
+                val gson = Gson()
+                val jsonString = file.readText()
+                val jsonArray = gson.fromJson(jsonString, JsonArray::class.java)
+
+                if (jsonArray.size() > 0) {
+                    val trainingResultList = mutableListOf<TrainingResult>()
+                    for (jsonElement in jsonArray) {
+                        val jsonObject = jsonElement.asJsonObject
+                        val trainingNumber = jsonObject.getAsJsonPrimitive("training_number").asInt
+                        val trainingDate = jsonObject.getAsJsonPrimitive("training_date").asString
+                        val trainingTime = jsonObject.getAsJsonPrimitive("training_time").asLong
+                        trainingResultList.add(TrainingResult(trainingNumber, trainingDate, trainingTime))
+                    }
+                    return trainingResultList
+                }
+            } catch (e: Exception) {
+                Log.e(TAG, "Błąd podczas odczytu wyników treningów z pliku JSON", e)
+            }
+        }
+
+        return emptyList()
     }
 
     private fun getCurrentDate(): String {
@@ -167,4 +203,13 @@ data class FaceScan(
     val asymmetry: Float,
     val date: String
 )
+
+data class TrainingResult(
+    val training_number: Int,
+    val training_date: String,
+    val training_time: Long
+)
+
+
+
 

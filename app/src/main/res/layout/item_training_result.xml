@@ -6,17 +6,21 @@
     android:padding="16dp">
 
     <TextView
-        android:id="@+id/faceScanAsymmetry"
+        android:id="@+id/trainingNumberTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        android:layout_marginBottom="8dp"/>
+        android:textSize="16sp"
+        android:textStyle="bold"/>
 
     <TextView
-        android:id="@+id/faceScanTimestamp"
+        android:id="@+id/trainingDateTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="14sp"
-        android:textColor="@android:color/darker_gray" />
+        android:textSize="14sp"/>
+
+    <TextView
+        android:id="@+id/trainingTimeTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="14sp"/>
 </LinearLayout>
