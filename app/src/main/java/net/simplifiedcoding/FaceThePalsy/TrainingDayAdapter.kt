@@ -6,12 +6,17 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Date
+import java.util.Locale
 
 class TrainingDayAdapter(private val trainingDays: List<TrainingDay>) :
     RecyclerView.Adapter<TrainingDayAdapter.ViewHolder>() {
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val dayNumberTextView: TextView = itemView.findViewById(R.id.dayNumberTextView)
+        val dateTextView: TextView = itemView.findViewById(R.id.dateTextView)
         val trainingIcon1: ImageView = itemView.findViewById(R.id.trainingIcon1)
         val trainingIcon2: ImageView = itemView.findViewById(R.id.trainingIcon2)
         val trainingIcon3: ImageView = itemView.findViewById(R.id.trainingIcon3)
@@ -27,6 +32,14 @@ class TrainingDayAdapter(private val trainingDays: List<TrainingDay>) :
         val trainingDay = trainingDays[position]
 
         holder.dayNumberTextView.text = "Dzień ${trainingDay.dayNumber}"
+        val trainingDate = trainingDay.trainingDate
+        val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+        val calendar = Calendar.getInstance()
+        val date = dateFormat.parse(trainingDate)
+        calendar.time = date ?: Date()
+        calendar.add(Calendar.DAY_OF_MONTH, trainingDay.dayNumber-1)
+        val newDate = dateFormat.format(calendar.time)
+        holder.dateTextView.text = "$newDate"
 
         val trainingIcons = listOf(
             holder.trainingIcon1,

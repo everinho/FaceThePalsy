@@ -73,11 +73,13 @@ class ScheduleActivity : AppCompatActivity() {
 
                 var completedTrainings = jsonObject?.getAsJsonPrimitive("completed_trainings")?.asInt ?: 0
                 var trainingCount = jsonObject?.getAsJsonPrimitive("daily_training")?.asInt ?: 1
+                var trainingDate = jsonObject?.getAsJsonPrimitive("date")?.asString
+                trainingDate = changeDateFormat(trainingDate)
 
                 for (i in 1..7) {
 
                     var isTrainingCompleted = (0 until trainingCount).map { it < completedTrainings }
-                    trainingDays.add(TrainingDay(i, trainingCount, completedTrainings, isTrainingCompleted))
+                    trainingDays.add(TrainingDay(i, trainingCount, completedTrainings, isTrainingCompleted, trainingDate))
                     completedTrainings -= trainingCount
                 }
             }
@@ -86,6 +88,20 @@ class ScheduleActivity : AppCompatActivity() {
         }
 
         return trainingDays
+    }
+
+    private fun changeDateFormat(inputDate: String?): String {
+        val inputFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+        val outputFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+
+        try {
+            val date: Date = inputFormat.parse(inputDate) ?: Date()
+            return outputFormat.format(date)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+
+        return ""
     }
 
     private fun loadAsymmetryFromJson(): Float {
@@ -116,5 +132,6 @@ data class TrainingDay(
     val dayNumber: Int,
     val trainingCount: Int,
     val completedTrainings: Int,
-    val isTrainingCompleted: List<Boolean> = List(trainingCount) { false }
+    val isTrainingCompleted: List<Boolean> = List(trainingCount) { false },
+    val trainingDate: String
 )
