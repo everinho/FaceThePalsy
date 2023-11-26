@@ -1,13 +1,19 @@
 package net.simplifiedcoding.FaceThePalsy.exercises
 
+import android.content.ContentValues
+import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.PointF
 import android.graphics.Rect
 import android.graphics.Typeface
+import android.media.MediaPlayer
+import android.util.Log
 import com.google.mlkit.vision.face.Face
 import com.google.mlkit.vision.face.FaceContour
+import net.simplifiedcoding.FaceThePalsy.R
+import net.simplifiedcoding.FaceThePalsy.facedetector.FaceBox
 import net.simplifiedcoding.FaceThePalsy.facedetector.FaceBoxOverlay
 import kotlin.math.pow
 import kotlin.math.sqrt
@@ -18,7 +24,8 @@ class FollowBox(
     private val face: Face,
     private val imageRect: Rect,
     private val id: Int,
-    private val repeats: Int
+    private val repeats: Int,
+    private val context: Context
 ) : FaceBoxOverlay.FaceBox(overlay) {
 
     companion object {
@@ -45,6 +52,10 @@ class FollowBox(
         var usrednianie_2: Int = 0
         var usrednianie_3: Int = 0
         var usrednianie_4: Int = 0
+        var sound_1: Boolean = false
+        var sound_2: Boolean = false
+        var sound_3: Boolean = false
+        var sound_4: Boolean = false
     }
 
     private val paint = Paint().apply {
@@ -193,6 +204,11 @@ class FollowBox(
 
                     if (left_repeats >= repeats) {
                         canvas?.drawText("Ćwiczenie ukończone!", 50F, 650F, paint_text_success)
+                        if(!sound_1)
+                        {
+                            playSoundExercise()
+                            sound_1 = true
+                        }
                     }
                 }
                 val proportion = leftEyebrowEyeDistance!! / length
@@ -246,6 +262,11 @@ class FollowBox(
 
                     if (left_repeats_2 >= repeats) {
                         canvas?.drawText("Ćwiczenie ukończone!", 50F, 650F, paint_text_success)
+                        if(!sound_3)
+                        {
+                            playSoundExercise()
+                            sound_3 = true
+                        }
                     }
                 }
                 val proportion = leftEyebrowEyeDistance!! / length
@@ -355,6 +376,11 @@ class FollowBox(
                     }
                     if (right_repeats >= repeats) {
                         canvas?.drawText("Ćwiczenie ukończone!", 50F, 650F, paint_text_success)
+                        if(!sound_2)
+                        {
+                            playSoundExercise()
+                            sound_2 = true
+                        }
                     }
                 }
                 val proportion = rightEyebrowEyeDistance!! /length
@@ -406,6 +432,11 @@ class FollowBox(
                     }
                     if (right_repeats_2 >= repeats) {
                         canvas?.drawText("Ćwiczenie ukończone!", 50F, 650F, paint_text_success)
+                        if(!sound_4)
+                        {
+                            playSoundExercise()
+                            sound_4 = true
+                        }
                     }
                 }
                 val proportion = rightEyebrowEyeDistance!! /length
@@ -480,4 +511,14 @@ class FollowBox(
         return sqrt((x2 - x1).pow(2) + (y2 - y1).pow(2))
     }
 
+    private fun playSoundExercise() {
+        try {
+            if (FaceBox.mediaPlayer == null) {
+                FaceBox.mediaPlayer = MediaPlayer.create(context, R.raw.cwiczenie)
+            }
+            FaceBox.mediaPlayer?.start()
+        } catch (e: Exception) {
+            Log.e(ContentValues.TAG, "Error playing sound", e)
+        }
+    }
 }

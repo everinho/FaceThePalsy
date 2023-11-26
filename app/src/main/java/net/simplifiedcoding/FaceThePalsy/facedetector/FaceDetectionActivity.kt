@@ -3,12 +3,10 @@ package net.simplifiedcoding.FaceThePalsy.facedetector
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
-import android.hardware.Camera
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
 import android.widget.ProgressBar
-import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -18,7 +16,6 @@ import androidx.camera.core.ImageProxy
 import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import com.google.mlkit.vision.common.InputImage
-import com.google.mlkit.vision.face.Face
 import com.google.mlkit.vision.face.FaceDetection
 import com.google.mlkit.vision.face.FaceDetector
 import com.google.mlkit.vision.face.FaceDetectorOptions
@@ -26,8 +23,6 @@ import net.simplifiedcoding.FaceThePalsy.CameraXViewModel
 import net.simplifiedcoding.FaceThePalsy.MainActivity
 import net.simplifiedcoding.FaceThePalsy.R
 import net.simplifiedcoding.FaceThePalsy.databinding.ActivityFaceDetectionBinding
-import net.simplifiedcoding.FaceThePalsy.exercises.FollowActivity
-import net.simplifiedcoding.FaceThePalsy.exercises.FollowBox
 import java.util.concurrent.Executors
 
 class FaceDetectionActivity : AppCompatActivity() {
@@ -92,6 +87,7 @@ class FaceDetectionActivity : AppCompatActivity() {
             FaceBox.asymmetry = 0f
             isDialogShown = false
             FaceBox.saved = false
+            FaceBox.soundPlayed = false
         }
 
         cameraSelector = CameraSelector.Builder().requireLensFacing(CameraSelector.LENS_FACING_FRONT).build()

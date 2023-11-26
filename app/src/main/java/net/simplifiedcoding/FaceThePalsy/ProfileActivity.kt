@@ -2,6 +2,7 @@ package net.simplifiedcoding.FaceThePalsy
 
 import android.content.ContentValues.TAG
 import android.content.Intent
+import android.media.MediaPlayer
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
@@ -14,6 +15,7 @@ import com.google.gson.Gson
 import com.google.gson.JsonArray
 import com.google.gson.JsonElement
 import com.google.gson.reflect.TypeToken
+import net.simplifiedcoding.FaceThePalsy.facedetector.FaceBox
 import java.io.BufferedReader
 import java.io.File
 import java.io.FileReader
@@ -29,6 +31,7 @@ class ProfileActivity : AppCompatActivity() {
         var faceScanHistory: MutableList<FaceScan> = mutableListOf()
         var totalTrainings: Int = 0
         var completedTrainings: Int = 0
+        var sound: Boolean = false
     }
 
     private lateinit var asymetria: TextView
@@ -123,6 +126,11 @@ class ProfileActivity : AppCompatActivity() {
         progressBar.progress = progress
 
         trainingsTextView.text = "Postęp: $progress%"
+        if(completedTrainings==totalTrainings && !sound)
+        {
+            playSound()
+            sound=true
+        }
     }
     
     private fun loadAsymmetryFromJson(): Float {
@@ -195,6 +203,17 @@ class ProfileActivity : AppCompatActivity() {
             } catch (e: Exception) {
                 Log.e(TAG, "Błąd podczas odczytu danych treningowych z pliku JSON", e)
             }
+        }
+    }
+
+    private fun playSound() {
+        try {
+            if (FaceBox.mediaPlayer == null) {
+                FaceBox.mediaPlayer = MediaPlayer.create(this, R.raw.plan)
+            }
+            FaceBox.mediaPlayer?.start()
+        } catch (e: Exception) {
+            Log.e(TAG, "Error playing sound", e)
         }
     }
 }

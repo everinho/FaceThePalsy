@@ -8,6 +8,7 @@ import android.graphics.Paint
 import android.graphics.PointF
 import android.graphics.Rect
 import android.graphics.Typeface
+import android.media.MediaPlayer
 import android.util.Log
 import android.widget.Toast
 import com.google.gson.Gson
@@ -17,6 +18,7 @@ import com.google.gson.JsonSyntaxException
 import com.google.mlkit.vision.face.Face
 import com.google.mlkit.vision.face.FaceContour
 import net.simplifiedcoding.FaceThePalsy.ProfileActivity
+import net.simplifiedcoding.FaceThePalsy.R
 import net.simplifiedcoding.FaceThePalsy.ScheduleActivity
 import net.simplifiedcoding.FaceThePalsy.exercises.FollowActivity
 import net.simplifiedcoding.FaceThePalsy.exercises.FollowBox
@@ -72,6 +74,8 @@ class FaceBox(
         var asymmetry = 0f
         var saved: Boolean = false
         var saved_training: Boolean = false
+        var soundPlayed: Boolean = false
+        var mediaPlayer: MediaPlayer? = null
     }
 
     private val paint_text = Paint().apply {
@@ -93,6 +97,8 @@ class FaceBox(
 
     override fun draw(canvas: Canvas?) {
 
+        val asymmetryDataFile = File(context.getExternalFilesDir(null), "asymmetry_data.json")
+        val isFirstScan = !asymmetryDataFile.exists() || asymmetryDataFile.readText().isEmpty()
 
         //eyes
         val left_eye = face.getContour(FaceContour.LEFT_EYE)?.points
@@ -311,6 +317,12 @@ class FaceBox(
             }
             else
             {
+                if(!soundPlayed)
+                {
+                    playSound()
+                    soundPlayed = true
+                }
+
                 val asymmetrical = "Asymetria: $asymmetry"
                 val textX = 80F
                 val textY = 250F
@@ -332,29 +344,22 @@ class FaceBox(
                 canvas?.drawText(asymmetrical, textX, textY, paint_text.apply { color = textColor })
                 canvas?.drawText(asymmetryText, textX, textY + 80, paint_text.apply { color = textColor })
 
-//                ScheduleActivity.asymmetry = asymmetry
-//                ProfileActivity.asymmetry = asymmetry
-
-//                val repeats = when {
-//                    asymmetry < 2.2 -> 8
-//                    asymmetry in 2.2..2.95 -> 10
-//                    else -> 12
-//                }
-
-                val trainingMessage = when {
-                    asymmetry < 2.2 -> "Zalecany 1 trening dziennie"
-                    asymmetry in 2.2..2.95 -> "Zalecane 2 treningi dziennie"
-                    else -> "Zalecane 3 treningi dziennie"
+                if (isFirstScan) {
+                    val trainingMessage = when {
+                        asymmetry < 2.2 -> "Zalecany 1 trening dziennie"
+                        asymmetry in 2.2..2.95 -> "Zalecane 2 treningi dziennie"
+                        else -> "Zalecane 3 treningi dziennie"
+                    }
+                    canvas?.drawText(trainingMessage, textX, textY + 180, paint_text.apply { color = textColor })
                 }
 
-                canvas?.drawText(trainingMessage, textX, textY + 180, paint_text.apply { color = textColor })
+
                 val resetMessage = "Możesz teraz ponownie zeskanować twarz."
                 val resetMessage2 = "W tym celu użyj przycisku reset!"
                 canvas?.drawText(resetMessage, textX, textY + 980, paint_text2.apply { color = Color.BLACK })
                 canvas?.drawText(resetMessage2, textX, textY + 1030, paint_text2.apply { color = Color.BLACK })
 
-//                FollowBox.repeats = repeats
-//                FollowActivity.repeats = repeats
+
 
                 if(!saved) {
                     saveAsymmetryToJson(asymmetry)
@@ -372,44 +377,33 @@ class FaceBox(
 
     private fun saveAsymmetryToJson(asymmetry: Float) {
         try {
-            // Tworzenie obiektu Gson
             val gson = Gson()
 
-            // Tworzenie obiektu JSON z nowymi danymi
             val jsonObject = JsonObject()
             jsonObject.addProperty("asymmetry", asymmetry)
             jsonObject.addProperty("date", getCurrentDate())
 
-            // Sprawdzenie, czy plik już istnieje
             val fileName = "asymmetry_data.json"
             val file = File(context.getExternalFilesDir(null), fileName)
 
             val jsonArray: JsonArray
 
             if (file.exists()) {
-                // Jeśli plik istnieje, wczytaj istniejące dane
                 val existingJson = file.readText()
                 try {
-                    // Spróbuj sparsować istniejący JSON jako JsonArray
                     jsonArray = gson.fromJson(existingJson, JsonArray::class.java)
                 } catch (e: JsonSyntaxException) {
-                    // Jeśli nie uda się sparsować jako JsonArray, to być może jest to pojedynczy obiekt JSON
-                    // Tutaj możesz obsłużyć go jako pojedynczy obiekt JSON
                     Log.e(TAG, "Błąd podczas parsowania JSON jako JsonArray", e)
                     return
                 }
             } else {
-                // Jeśli plik nie istnieje, utwórz nową tablicę
                 jsonArray = JsonArray()
             }
 
-            // Dodanie obiektu do tablicy
             jsonArray.add(jsonObject)
 
-            // Konwertowanie do formatu JSON
             val jsonString = gson.toJson(jsonArray)
 
-            // Zapis do pliku
             val fileWriter = FileWriter(file, false)
             fileWriter.use {
                 it.write(jsonString)
@@ -461,72 +455,16 @@ class FaceBox(
         return sqrt((x2 - x1).pow(2) + (y2 - y1).pow(2))
     }
 
-//    private fun saveTrainingDataToJson(asymmetry: Float) {
-//        try {
-//            // Create Gson object
-//            val gson = Gson()
-//
-//            // Create JSON object with new data
-//            val jsonObject = JsonObject()
-//            jsonObject.addProperty("asymmetry", asymmetry)
-//            jsonObject.addProperty("date", getCurrentDate())
-//            jsonObject.addProperty("total_training", getTotalTraining(asymmetry))
-//            jsonObject.addProperty("daily_training", getDailyTraining(asymmetry))
-//            jsonObject.addProperty("repetitions", getRepetitions(asymmetry))
-//            jsonObject.addProperty("completed_trainings", 0)
-//
-//            // Check if the file already exists
-//            val fileName = "training_data.json"
-//            val file = File(context.getExternalFilesDir(null), fileName)
-//
-//            val jsonArray: JsonArray = if (file.exists()) {
-//                // If the file exists, read existing data
-//                val existingJson = file.readText()
-//                try {
-//                    // Try to parse existing JSON as JsonArray
-//                    gson.fromJson(existingJson, JsonArray::class.java)
-//                } catch (e: JsonSyntaxException) {
-//                    // If parsing fails, handle it as a single JSON object
-//                    Log.e(TAG, "Error parsing JSON as JsonArray", e)
-//                    return
-//                }
-//            } else {
-//                // If the file doesn't exist, create a new array
-//                JsonArray()
-//            }
-//
-//            // Add the object to the array
-//            jsonArray.add(jsonObject)
-//
-//            // Convert to JSON format
-//            val jsonString = gson.toJson(jsonArray)
-//
-//            // Write to the file
-//            val fileWriter = FileWriter(file, false)
-//            fileWriter.use {
-//                it.write(jsonString)
-//            }
-//
-//            Log.d(TAG, "Data appended to JSON file: $jsonString")
-//        } catch (e: Exception) {
-//            Log.e(TAG, "Error saving data to JSON file", e)
-//        }
-//    }
-
     private fun saveTrainingDataToJson(asymmetry: Float) {
         try {
-            // Create Gson object
             val gson = Gson()
 
-            // Check if the file already exists
             val fileName = "training_data.json"
             val file = File(context.getExternalFilesDir(null), fileName)
 
             if (!file.exists()) {
-                // If the file doesn't exist, create a new array
                 val jsonArray = JsonArray()
 
-                // Create JSON object with new data
                 val jsonObject = JsonObject()
                 jsonObject.addProperty("asymmetry", asymmetry)
                 jsonObject.addProperty("date", getCurrentDate())
@@ -535,13 +473,10 @@ class FaceBox(
                 jsonObject.addProperty("repetitions", getRepetitions(asymmetry))
                 jsonObject.addProperty("completed_trainings", 0)
 
-                // Add the object to the array
                 jsonArray.add(jsonObject)
 
-                // Convert to JSON format
                 val jsonString = gson.toJson(jsonArray)
 
-                // Write to the file
                 val fileWriter = FileWriter(file, false)
                 fileWriter.use {
                     it.write(jsonString)
@@ -578,6 +513,17 @@ class FaceBox(
             asymmetry < 2.2 -> 8
             asymmetry in 2.2..2.95 -> 10
             else -> 12
+        }
+    }
+
+    private fun playSound() {
+        try {
+            if (mediaPlayer == null) {
+                mediaPlayer = MediaPlayer.create(context, R.raw.skan)
+            }
+            mediaPlayer?.start()
+        } catch (e: Exception) {
+            Log.e(TAG, "Error playing sound", e)
         }
     }
 

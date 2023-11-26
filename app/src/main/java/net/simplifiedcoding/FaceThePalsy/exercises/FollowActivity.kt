@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
+import android.media.MediaPlayer
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
@@ -29,6 +30,7 @@ import net.simplifiedcoding.FaceThePalsy.MainActivity
 import net.simplifiedcoding.FaceThePalsy.ProfileActivity
 import net.simplifiedcoding.FaceThePalsy.R
 import net.simplifiedcoding.FaceThePalsy.databinding.ActivityFollowBinding
+import net.simplifiedcoding.FaceThePalsy.facedetector.FaceBox
 import net.simplifiedcoding.FaceThePalsy.facedetector.FaceDetectionActivity
 import java.io.File
 import java.io.FileWriter
@@ -75,6 +77,7 @@ class FollowActivity : AppCompatActivity() {
     private var success = false
     private var startTime: Long = 0
     private var endTime: Long = 0
+    private var sound: Boolean = false
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -221,7 +224,7 @@ class FollowActivity : AppCompatActivity() {
         detector.process(inputImage).addOnSuccessListener { faces ->
             binding.graphicOverlay.clear()
             faces.forEach { face ->
-                val faceBox = FollowBox(binding.graphicOverlay, face, imageProxy.image!!.cropRect, currentExerciseIndex, repeats)
+                val faceBox = FollowBox(binding.graphicOverlay, face, imageProxy.image!!.cropRect, currentExerciseIndex, repeats, this)
                 binding.graphicOverlay.add(faceBox)
             }
         }.addOnFailureListener {
@@ -255,8 +258,6 @@ class FollowActivity : AppCompatActivity() {
         success = false
         binding.graphicOverlay.clear()
 
-//        val exerciseFilm = exercises_films[currentExerciseIndex]
-//        gifImageView.setImageResource(exerciseFilm.gifResourceId)
     }
 
     private fun updateButtonStates() {
@@ -292,8 +293,17 @@ class FollowActivity : AppCompatActivity() {
         FollowBox.usrednianie_2 = 0
         FollowBox.usrednianie_3 = 0
         FollowBox.usrednianie_4 = 0
+        FollowBox.sound_1 = false
+        FollowBox.sound_2 = false
+        FollowBox.sound_3 = false
+        FollowBox.sound_4 = false
         FollowBox.sumat = 0F
 
+        if(!sound)
+        {
+            playSound()
+            sound = true
+        }
         val alertDialogBuilder = AlertDialog.Builder(this)
         alertDialogBuilder.setTitle("Zestaw treningowy ukończony")
         alertDialogBuilder.setMessage("Gratulacje! Ukończyłeś zestaw treningowy.")
@@ -339,7 +349,6 @@ class FollowActivity : AppCompatActivity() {
         try {
             val gson = Gson()
 
-            // Pobierz aktualną zawartość pliku training_data.json
             val trainingDataFileName = "training_data.json"
             val trainingDataFile = File(getExternalFilesDir(null), trainingDataFileName)
             val trainingDataJsonString = if (trainingDataFile.exists()) {
@@ -348,18 +357,14 @@ class FollowActivity : AppCompatActivity() {
                 "[]"
             }
 
-            // Parsuj zawartość jako JsonArray
             val trainingDataJsonArray = try {
                 gson.fromJson(trainingDataJsonString, JsonArray::class.java)
             } catch (e: JsonSyntaxException) {
-                // Jeżeli parsowanie zawiedzie, utwórz nową pustą tablicę
                 JsonArray()
             }
 
-            // Pobierz liczbę completed_trainings z ostatniego wpisu lub ustaw na 0
             val lastTrainingNumber = trainingDataJsonArray.lastOrNull()?.asJsonObject?.getAsJsonPrimitive("completed_trainings")?.asInt ?: 0
 
-            // Dodaj informacje o treningu do pliku training_result.json
             val trainingResultFileName = "training_result.json"
             val trainingResultFile = File(getExternalFilesDir(null), trainingResultFileName)
             val trainingResultJsonString = if (trainingResultFile.exists()) {
@@ -368,15 +373,12 @@ class FollowActivity : AppCompatActivity() {
                 "[]"
             }
 
-            // Parsuj zawartość jako JsonArray
             val trainingResultJsonArray = try {
                 gson.fromJson(trainingResultJsonString, JsonArray::class.java)
             } catch (e: JsonSyntaxException) {
-                // Jeżeli parsowanie zawiedzie, utwórz nową pustą tablicę
                 JsonArray()
             }
 
-            // Dodaj informacje o treningu do istniejącego wpisu lub utwórz nowy
             val trainingResultEntry = JsonObject().apply {
                 addProperty("training_number", lastTrainingNumber + 1) // Numer treningu
                 addProperty("training_date", SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(Date())) // Data treningu
@@ -385,10 +387,8 @@ class FollowActivity : AppCompatActivity() {
 
             trainingResultJsonArray.add(trainingResultEntry)
 
-            // Konwertuj z powrotem do formatu JSON
             val updatedTrainingResultJsonString = gson.toJson(trainingResultJsonArray)
 
-            // Zapisz zaktualizowany JSON do pliku training_result.json
             val trainingResultFileWriter = FileWriter(trainingResultFile, false)
             trainingResultFileWriter.use {
                 it.write(updatedTrainingResultJsonString)
@@ -407,7 +407,6 @@ class FollowActivity : AppCompatActivity() {
         alertDialogBuilder.setMessage("Aby rozpocząć trening, musisz wykonać skan twarzy i dobrać odpowiedni trening.")
         alertDialogBuilder.setPositiveButton("OK") { dialog, _ ->
             dialog.dismiss()
-            // Tutaj możesz uruchomić aktywność do skanowania twarzy lub inny odpowiedni ekran
             val intent = Intent(this, FaceDetectionActivity::class.java)
             startActivity(intent)
             finish()
@@ -421,7 +420,6 @@ class FollowActivity : AppCompatActivity() {
         try {
             val gson = Gson()
 
-            // Pobierz aktualną zawartość pliku
             val fileName = "training_data.json"
             val file = File(getExternalFilesDir(null), fileName)
             val jsonString = if (file.exists()) {
@@ -430,35 +428,28 @@ class FollowActivity : AppCompatActivity() {
                 "[]"
             }
 
-            // Parsuj zawartość jako JsonArray
             val jsonArray = try {
                 gson.fromJson(jsonString, JsonArray::class.java)
             } catch (e: JsonSyntaxException) {
-                // Jeżeli parsowanie zawiedzie, utwórz nową pustą tablicę
                 JsonArray()
             }
 
-            // Sprawdź, czy istnieje już wpis z completed_trainings
             val existingEntry = jsonArray.find {
                 it.isJsonObject && it.asJsonObject.has("completed_trainings")
             }
 
             if (existingEntry != null) {
-                // Znaleziono istniejący wpis, zaktualizuj jego wartość
                 val completedTrainings = existingEntry.asJsonObject.getAsJsonPrimitive("completed_trainings").asInt
                 existingEntry.asJsonObject.addProperty("completed_trainings", completedTrainings + 1)
             } else {
-                // Nie znaleziono istniejącego wpisu, dodaj nowy
                 val newEntry = JsonObject().apply {
                     addProperty("completed_trainings", 1)
                 }
                 jsonArray.add(newEntry)
             }
 
-            // Konwertuj z powrotem do formatu JSON
             val updatedJsonString = gson.toJson(jsonArray)
 
-            // Zapisz zaktualizowany JSON do pliku
             val fileWriter = FileWriter(file, false)
             fileWriter.use {
                 it.write(updatedJsonString)
@@ -470,6 +461,16 @@ class FollowActivity : AppCompatActivity() {
         }
     }
 
+    private fun playSound() {
+        try {
+            if (FaceBox.mediaPlayer == null) {
+                FaceBox.mediaPlayer = MediaPlayer.create(this, R.raw.trening)
+            }
+            FaceBox.mediaPlayer?.start()
+        } catch (e: Exception) {
+            Log.e(ContentValues.TAG, "Error playing sound", e)
+        }
+    }
 
     companion object {
         private val TAG = FollowActivity::class.simpleName
