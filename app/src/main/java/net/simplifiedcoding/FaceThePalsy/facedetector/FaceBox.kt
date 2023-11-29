@@ -301,15 +301,12 @@ class FaceBox(
                 val normalizedDistancesLeft = distancesLeft.map { it / length }
                 val normalizedDistancesRight = distancesRight.map { it / length }
 
-                // Oblicz różnice między odpowiadającymi sobie dystansami
                 val differences = normalizedDistancesLeft.mapIndexed { index, distanceLeft ->
                     abs(distanceLeft - normalizedDistancesRight[index])
                 }
 
-                // Oblicz sumę różnic
                 val sumOfDifferences = differences.sum()
 
-                // Oblicz średnią różnicę
                 asymmetry = sumOfDifferences / distancesLeft.size
 
                 asymmetry *= 100
@@ -329,7 +326,6 @@ class FaceBox(
                 val textColor: Int
 
                 val asymmetryText: String
-
 
                 if (asymmetry < 2.2) {
                     asymmetryText = "Niewielka asymetria"
@@ -353,13 +349,10 @@ class FaceBox(
                     canvas?.drawText(trainingMessage, textX, textY + 180, paint_text.apply { color = textColor })
                 }
 
-
                 val resetMessage = "Możesz teraz ponownie zeskanować twarz."
                 val resetMessage2 = "W tym celu użyj przycisku reset!"
                 canvas?.drawText(resetMessage, textX, textY + 980, paint_text2.apply { color = Color.BLACK })
                 canvas?.drawText(resetMessage2, textX, textY + 1030, paint_text2.apply { color = Color.BLACK })
-
-
 
                 if(!saved) {
                     saveAsymmetryToJson(asymmetry)

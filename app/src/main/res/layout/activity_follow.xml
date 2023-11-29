@@ -21,7 +21,8 @@
         android:layout_height="wrap_content"
         android:text="Jak wykonać?"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@id/backButton" />
+        app:layout_constraintTop_toTopOf="@id/backButton"
+        android:layout_marginRight="16dp"/>
 
     <androidx.camera.view.PreviewView
         android:id="@+id/preview_view"
@@ -61,7 +62,8 @@
         android:layout_margin="16dp"
         android:text="Reset"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/nextButton" />
+        app:layout_constraintTop_toTopOf="@id/nextButton"
+        app:layout_constraintBottom_toBottomOf="@id/nextButton" />
 
     <Button
         android:id="@+id/nextButton"

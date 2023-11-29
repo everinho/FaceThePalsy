@@ -35,11 +35,11 @@ class MainActivity : AppCompatActivity() {
             requestCameraAndStart()
         }
 
-        val settingsButton = findViewById<Button>(R.id.settings)
-        settingsButton.setOnClickListener {
-            val intent = Intent(this, SettingsActivity::class.java)
-            startActivity(intent)
-        }
+//        val settingsButton = findViewById<Button>(R.id.settings)
+//        settingsButton.setOnClickListener {
+//            val intent = Intent(this, SettingsActivity::class.java)
+//            startActivity(intent)
+//        }
 
         val scheduleButton = findViewById<ImageButton>(R.id.schedule)
         scheduleButton.setOnClickListener {
@@ -59,8 +59,8 @@ class MainActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
-        val helpbutton = findViewById<Button>(R.id.help)
-        helpbutton.setOnClickListener {
+        val helpButton = findViewById<Button>(R.id.help)
+        helpButton.setOnClickListener {
             val intent = Intent(this, HelpActivity::class.java)
             startActivity(intent)
         }

@@ -5,10 +5,8 @@ import android.os.Bundle
 import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import net.simplifiedcoding.FaceThePalsy.MainActivity
 import net.simplifiedcoding.FaceThePalsy.R
 import pl.droidsonroids.gif.GifImageView
-import androidx.appcompat.app.AlertDialog
 
 class ExerciseActivity : AppCompatActivity() {
 
@@ -44,21 +42,12 @@ class ExerciseActivity : AppCompatActivity() {
         }
 
         updateExerciseView()
-        updateButtonStates()
     }
 
     private fun updateExerciseView() {
         val exercise = exercises[currentExerciseIndex]
         exerciseNameTextView.text = exercise.name
         gifImageView.setImageResource(exercise.gifResourceId)
-    }
-
-    private fun updateButtonStates() {
-//        val prevButton = findViewById<Button>(R.id.prevButton)
-//        prevButton.isEnabled = currentExerciseIndex > 0
-
-        //val nextButton = findViewById<Button>(R.id.nextButton)
-        //nextButton.isEnabled = currentExerciseIndex < exercises.size - 1
     }
 }
 

@@ -13,13 +13,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.gson.Gson
 import com.google.gson.JsonArray
-import com.google.gson.JsonElement
-import com.google.gson.reflect.TypeToken
 import net.simplifiedcoding.FaceThePalsy.facedetector.FaceBox
-import java.io.BufferedReader
 import java.io.File
-import java.io.FileReader
-import java.io.FileWriter
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -121,7 +116,6 @@ class ProfileActivity : AppCompatActivity() {
         trainingsTextView = findViewById(R.id.trainingsTextView)
 
         val progress = (completedTrainings.toDouble() / totalTrainings.toDouble() * 100).toInt()
-        //val progress = (7.toDouble() / totalTrainings.toDouble() * 100).toInt()
 
         progressBar.progress = progress
 
@@ -144,7 +138,6 @@ class ProfileActivity : AppCompatActivity() {
                 val jsonArray = gson.fromJson(jsonString, JsonArray::class.java)
 
                 if (jsonArray.size() > 0) {
-                    // Pobierz asymetrię z pierwszego wpisu w pliku
                     val firstEntry = jsonArray.first().asJsonObject
                     return firstEntry.getAsJsonPrimitive("asymmetry").asFloat
                 }
@@ -195,7 +188,6 @@ class ProfileActivity : AppCompatActivity() {
                 val jsonArray = gson.fromJson(jsonString, JsonArray::class.java)
 
                 if (jsonArray.size() > 0) {
-                    // Pobierz wartości total_training i completed_trainings z ostatniego wpisu w pliku
                     val lastEntry = jsonArray.last().asJsonObject
                     totalTrainings = lastEntry.getAsJsonPrimitive("total_training").asInt
                     completedTrainings = lastEntry.getAsJsonPrimitive("completed_trainings").asInt

@@ -108,7 +108,6 @@ class FaceDetectionActivity : AppCompatActivity() {
 
         alertDialog = dialogBuilder.create()
 
-        // Wywołanie dialogu po otwarciu aktywności
         alertDialog.show()
     }
 
@@ -170,9 +169,7 @@ class FaceDetectionActivity : AppCompatActivity() {
             binding.graphicOverlay.clear()
             faces.forEach { face ->
                 val faceBox = FaceBox(binding.graphicOverlay, this,face, imageProxy.image!!.cropRect)
-                //val landmarks = FaceLandmarks(binding.graphicOverlay, face, imageProxy.image!!.cropRect)
                 binding.graphicOverlay.add(faceBox)
-                //binding.graphicOverlay.add(landmarks)
             }
         }.addOnFailureListener {
             it.printStackTrace()

@@ -27,14 +27,11 @@ class FaceScanHistoryAdapter(private val faceScans: List<FaceScan>) :
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val faceScan = faceScans[position]
 
-        // Formatuj datę
         val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
 
         try {
-            // Parsuj datę z formatu string do obiektu Date
             val date = dateFormat.parse(faceScan.date)
 
-            // Formatuj datę na nowo, jeśli konwersja się powiedzie
             val formattedDate = SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.getDefault()).format(date)
 
             holder.asymmetryTextView.text = "Asymetria: ${faceScan.asymmetry}"
