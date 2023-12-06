@@ -49,6 +49,7 @@ class ExerciseActivity : AppCompatActivity() {
         exerciseNameTextView.text = exercise.name
         gifImageView.setImageResource(exercise.gifResourceId)
     }
+
 }
 
 data class Exercise(val name: String, val gifResourceId: Int)

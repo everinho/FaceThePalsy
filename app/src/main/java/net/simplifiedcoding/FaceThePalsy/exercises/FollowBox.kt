@@ -214,10 +214,10 @@ class FollowBox(
                     }
                 }
                 val proportion = leftEyebrowEyeDistance!! / length
-                val leftDistanceText = "Dystans: ${proportion?.toString() ?: "N/A"}"
+                val leftDistanceText = "Dystans: ${proportion.toString() ?: "N/A"}"
                 canvas?.drawText("Ćwiczenie 1", 50F, 250F, paint_text)
-                canvas?.drawText("Iteracja: ${usrednianie_1?.toString() ?: "N/A"}", 600F, 250F, paint_text)
-                canvas?.drawText("Prog: ${prog_1?.toString() ?: "N/A"}", 600F, 350F, paint_text)
+                canvas?.drawText("Iteracja: ${usrednianie_1.toString() ?: "N/A"}", 600F, 250F, paint_text)
+                canvas?.drawText("Prog: ${prog_1.toString() ?: "N/A"}", 600F, 350F, paint_text)
                 canvas?.drawText(leftDistanceText, 600F, 450F, paint_text)
 
                 if(left_repeats<repeats)
@@ -462,10 +462,7 @@ class FollowBox(
 
         if (id == 4) {
             val smilingProbability = face.smilingProbability
-            //val smileText = "Smiling probability: $smilingProbability"
-            //canvas?.drawText(smileText, 50F, 350F, paint_text)
             val repetitionsText = "Powtórzenia: $smile_repeats / $repeats"
-
             canvas?.drawText("Ćwiczenie 5", 50F, 250F, paint_text)
             canvas?.drawText(repetitionsText, 50F, 450F, paint_text)
 

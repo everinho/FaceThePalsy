@@ -101,7 +101,7 @@ class FollowActivity : AppCompatActivity() {
             finishAffinity()
         }
 
-        startTime = System.currentTimeMillis()
+        startTime = loadStartTime()
 
         val resetButton = findViewById<Button>(R.id.reset)
         resetButton.setOnClickListener {
@@ -131,6 +131,8 @@ class FollowActivity : AppCompatActivity() {
 
         val playVideoButton = findViewById<Button>(R.id.PlayVideo)
         playVideoButton.setOnClickListener {
+            startTime = System.currentTimeMillis()
+            saveStartTime(startTime)
             val intent = Intent(this, ExerciseActivity::class.java)
             intent.putExtra("currentExerciseIndex", currentExerciseIndex)
             startActivity(intent)
@@ -318,6 +320,18 @@ class FollowActivity : AppCompatActivity() {
         alertDialog.show()
     }
 
+    private fun saveStartTime(startTime: Long) {
+        val sharedPreferences = getSharedPreferences("MyAppPreferences", Context.MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+        editor.putLong("start_time", startTime)
+        editor.apply()
+    }
+
+    private fun loadStartTime(): Long {
+        val sharedPreferences = getSharedPreferences("MyAppPreferences", Context.MODE_PRIVATE)
+        return sharedPreferences.getLong("start_time", 0)
+    }
+
     private fun loadAsymmetryFromJson(): Float {
         val fileName = "asymmetry_data.json"
         val file = File(getExternalFilesDir(null), fileName)
@@ -479,6 +493,7 @@ class FollowActivity : AppCompatActivity() {
                 context.startActivity(it)
             }
         }
+        //const val repeats: Int = 4
         var repeats: Int = 0
         var asymmetry: Float = 0f
     }

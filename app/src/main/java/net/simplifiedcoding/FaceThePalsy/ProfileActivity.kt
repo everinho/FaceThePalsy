@@ -101,7 +101,6 @@ class ProfileActivity : AppCompatActivity() {
                 Log.e(TAG, "Błąd podczas odczytu wyników treningów z pliku JSON", e)
             }
         }
-
         return emptyList()
     }
 

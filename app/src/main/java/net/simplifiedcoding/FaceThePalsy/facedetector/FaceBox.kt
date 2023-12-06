@@ -288,8 +288,6 @@ class FaceBox(
                 )
                 val mappedPoint2 = PointF(rect2.centerX(), rect2.centerY())
 
-                val length = calculateDistancesimple(mappedPoint1.x,mappedPoint1.y, mappedPoint2.x,mappedPoint2.y)
-
                 val distancesLeft = listOf(
                     distance_Bl, distance_D, distance_H, distance_F, distance_J, distance_T, distance_R, distance_Vl, distance_Pi, distance_Pu, distance_Nl, distance_Nr
                 )
@@ -298,6 +296,7 @@ class FaceBox(
                     distance_Br, distance_E, distance_I, distance_G, distance_K, distance_U, distance_S, distance_Vr, distance_Qi, distance_Qu, distance_Or, distance_Ol
                 )
 
+                val length = calculateDistancesimple(mappedPoint1.x,mappedPoint1.y, mappedPoint2.x,mappedPoint2.y)
                 val normalizedDistancesLeft = distancesLeft.map { it / length }
                 val normalizedDistancesRight = distancesRight.map { it / length }
 
