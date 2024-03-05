@@ -1,4 +1,3 @@
-
 # FaceThePalsy
 
 Application supporting rehabilitation in facial nerve palsy using artificial intelligence models. The application allows you to assess paralysis and control rehabilitation exercises. It also controls the regularity of exercise. As AI I used Google API for face detection from ML Kit. User data are stored in local memory as json files. 
@@ -16,11 +15,15 @@ Application supporting rehabilitation in facial nerve palsy using artificial int
 
 Facial nerve palsy is assessed based on facial asymmetry. There are three levels of infection. 
 The following (31) points detected on the face are used for the classification process.
+
 <img src="https://github.com/everinho/FaceThePalsy/assets/117845737/4fa42989-38e4-4111-abd9-df26518e82a8" alt="asymetria_1" width="400">
+
 The following facial distances are then calculated.
+
 <img src="https://github.com/everinho/FaceThePalsy/assets/117845737/34dca897-15d3-4dbf-b0cb-35ad7dea048c" alt="asymetria_2" width="400">
 <img src="https://github.com/everinho/FaceThePalsy/assets/117845737/d420d5e3-e5a7-45a6-af6e-688401ead7c0" alt="asymetria_3" width="400">
 <img src="https://github.com/everinho/FaceThePalsy/assets/117845737/60cc8f30-7f4d-4d9a-85d9-a72301023e86" alt="asymetria_4" width="400">
+
 In order to minimize possible interference and errors in the measurement, 30 iterations are carried out, during which all distances are counted. Finally, the calculated distances are averaged over the number of iterations and subjected to subsequent transformations. This number of iterations was determined during the tests. It was decided that such a facial scan does not take too long and the results obtained are most reliable. Variants with a larger number of iterations were also tested, but the measurement would take too long and it would be difficult for the user to maintain the same facial expression, e.g. without blinking. Ultimately, all distances are compared to each other in pairs. For example, the distance "Al" from "Ar", etc. The calculated differences between the corresponding distances are then summed and averaged by the number of distances on one side.
 
 ## Screenshots
@@ -52,4 +55,3 @@ Exercise example <br />
 ## Authors
 
 - [@Antoni Górecki](https://github.com/everinho)
-
