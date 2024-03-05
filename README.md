@@ -27,17 +27,17 @@ In order to minimize possible interference and errors in the measurement, 30 ite
 
 GUI of the app
 Main screen
-![gui_main](https://github.com/everinho/FaceThePalsy/assets/117845737/36452491-36e5-4521-a64a-25923e98d005)
+![gui_main](https://github.com/everinho/FaceThePalsy/assets/117845737/cffa7f0a-5dcd-493f-a216-cbcd36c10a58)
 Profile view
-![profile_view](https://github.com/everinho/FaceThePalsy/assets/117845737/fa47f63a-0714-4a20-b9cd-858d3c73b8b1)
+![profile_view](https://github.com/everinho/FaceThePalsy/assets/117845737/e20d0c0c-8126-40e9-8507-556a445b6929)
 Schedule view
-![schedule_view](https://github.com/everinho/FaceThePalsy/assets/117845737/042aef34-dce1-49c7-bce1-601293089a35)
+![schedule_view](https://github.com/everinho/FaceThePalsy/assets/117845737/de3c5ef2-daaa-425d-bc11-79e9d257ce0f)
 
 Training
 Exercise example
-![cw1](https://github.com/everinho/FaceThePalsy/assets/117845737/e2cfc6b2-4f96-43d8-98a1-5c21bf6cbff9)
+![cw1](https://github.com/everinho/FaceThePalsy/assets/117845737/92ec37a6-2115-4305-b7cf-4d8a19b5cf6c)
 Exercise example
-![cw2](https://github.com/everinho/FaceThePalsy/assets/117845737/c6e7945d-316d-4391-ba6b-0ae6494429b7)
+![cw2](https://github.com/everinho/FaceThePalsy/assets/117845737/43d2ca9d-da6a-485a-b0b2-ca8bb27bd4f1)
 
 ## Demo
 
