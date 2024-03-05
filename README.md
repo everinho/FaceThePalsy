@@ -45,9 +45,9 @@ Exercise example <br />
 ## Demo
 
 Asymmetry classification <br />
-https://github.com/everinho/FaceThePalsy/assets/117845737/3978b7f1-d6b6-444f-8cbb-cce2cb1cb1eb
+https://github.com/everinho/FaceThePalsy/assets/117845737/26a45327-1ef5-421a-8297-ebb22a1055cd <br />
 Training exercise <br />
-https://github.com/everinho/FaceThePalsy/assets/117845737/42b53a46-8f4b-45b8-8b64-75660cee421f
+https://github.com/everinho/FaceThePalsy/assets/117845737/42b53a46-8f4b-45b8-8b64-75660cee421f <br />
 
 
 ## Tech Stack
