@@ -44,7 +44,10 @@ Exercise example <br />
 
 ## Demo
 
-
+Asymmetry classification <br />
+https://github.com/everinho/FaceThePalsy/assets/117845737/3978b7f1-d6b6-444f-8cbb-cce2cb1cb1eb
+Training exercise <br />
+https://github.com/everinho/FaceThePalsy/assets/117845737/42b53a46-8f4b-45b8-8b64-75660cee421f
 
 
 ## Tech Stack
